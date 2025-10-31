@@ -5,6 +5,14 @@
 #include "ansi_color.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
+
+typedef enum {
+	SUCCESS,
+	FAILURE,
+	NOIOCTL,
+	ECALLOC
+} status_t;
 
 typedef uint32_t cchar_t;
 
