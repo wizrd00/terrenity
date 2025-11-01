@@ -10,4 +10,6 @@
 
 status_t init(matrix_t *mx, unsigned int vmin, unsigned int vtime);
 
+status_t refresh(matrix_t *mx);
+
 #endif

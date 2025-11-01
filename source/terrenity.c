@@ -52,3 +52,7 @@ status_t init(matrix_t *mx, unsigned int vmin, unsigned int vtime) {
 		return stat = ECALLOC;
 	return stat;
 }
+
+status_t refresh(matrix_t *mx) {
+	status_t stat = SUCCESS;
+}
