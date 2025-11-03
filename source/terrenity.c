@@ -53,6 +53,30 @@ status_t init(matrix_t *mx, unsigned int vmin, unsigned int vtime) {
 	return stat;
 }
 
+status_t render(matrix_t *mx) {
+	status_t stat = SUCCESS;
+	unsigned char underline = 0;
+	unsigned char bold = 0;
+	unsigned char background = 0;
+	unsigned char foreground = 0;
+	unsigned char character = '\0';
+	for (int i = 0; i < mx->row; i++)
+		for (int j = 0; j < mx->col; j++) {
+			underline = (mx->floor_mx[i][j] >> 0x18) & 0x4;
+			bold = (mx->floor_mx[i][j] >> 0x18) & 0x1;		
+			background = (mx->floor_mx[i][j] >> 0x10) & 0xff; 
+			foreground = (mx->floor_mx[i][j] >> 0x8) & 0xff;
+			character = ((mx->floor_mx[i][j] & 0xff) < 32) ? ' ' : (mx->floor_mx[i][j] >> 0x0) & 0xff;
+			printf(PRINT_FORMAT, underline, bold, background, foreground, character);
+		}
+	return stat;
+}
+
 status_t refresh(matrix_t *mx) {
 	status_t stat = SUCCESS;
+	for (int i = 0; i < mx->row; i++)
+		for (int j = 0; j < mx->col; j++)
+			if (mx->float_mx[i][j] != 0)
+				mx->floor_mx[i][j] = mx->float_mx[i][j];
+	return stat;
 }
