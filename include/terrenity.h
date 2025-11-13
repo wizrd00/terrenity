@@ -4,6 +4,7 @@
 #include "types.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <termios.h>
 #include <asm/termbits.h>
 #include <asm/termios.h>
 #include <sys/ioctl.h>
