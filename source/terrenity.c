@@ -38,45 +38,42 @@ static int allocate_matrix(matrix_t *mx) {
 }
 
 status_t init(matrix_t *mx, unsigned int vmin, unsigned int vtime) {
-	status_t stat = SUCCESS;
+	status_t _stat = SUCCESS;
 	struct winsize ws;
 	tcgetattr(stdin, &default_stdin_tp);	
 	tcgetattr(stdout, &default_stdout_tp);	
 	set_stdin_attributes(vmin, vtime);
 	set_stdout_attributes();
-	if (ioctl(stdout, TIOCGWINSZ, &ws) == -1)
-		return stat = NOIOCTL;
+	CHECK_NOTEQUAL(-1, ioctl(stdout, TIOCGWINSZ, &ws), NOIOCTL);
 	mx->row = ws.ws_row;
 	mx->col = ws.ws_col;
-	if (allocate_matrix(mx) == -1)
-		return stat = ECALLOC;
-	return stat;
+	CHECK_NOTEQUAL(-1, allocate_matrix(mx), ECALLOC);
+	return _stat;
 }
 
 status_t render(matrix_t *mx) {
-	status_t stat = SUCCESS;
-	unsigned char underline = 0;
-	unsigned char bold = 0;
-	unsigned char background = 0;
-	unsigned char foreground = 0;
-	unsigned char character = '\0';
+	status_t _stat = SUCCESS;
+	char buf[PIXEL_FORMAT_SIZE] = {0};
+	uint8_t sec0 = 0;
+	uint8_t sec1 = 0;
 	for (int i = 0; i < mx->row; i++)
 		for (int j = 0; j < mx->col; j++) {
-			underline = (mx->floor_mx[i][j] >> 0x18) & 0x4;
-			bold = (mx->floor_mx[i][j] >> 0x18) & 0x1;		
-			background = (mx->floor_mx[i][j] >> 0x10) & 0xff; 
-			foreground = (mx->floor_mx[i][j] >> 0x8) & 0xff;
-			character = ((mx->floor_mx[i][j] & 0xff) < 32) ? ' ' : (mx->floor_mx[i][j] >> 0x0) & 0xff;
-			printf(PRINT_FORMAT, underline, bold, background, foreground, character);
+			uint8_t underline = mx->ulbd >> 26;	
+			uint8_t bold = mx->ulbd >> 24;	
+			sec0 = (underline != 0) underline : bold;
+			sec1 = (bold != 0) bold : underline;
+			snprintf(buf, sizeof (buf), PIXEL_FORMAT, sec0, sec1, mx->bgnd, mx->fgnd, mx->cval);
+			CHECK_EQUAL(sizeof (buf), fwrite(buf, sizeof (buf), stdout), EFWRITE);
 		}
-	return stat;
+	CHECK_EQUAL(EOF, fflush(stdout), EFFLUSH);
+	return _stat;
 }
 
 status_t refresh(matrix_t *mx) {
-	status_t stat = SUCCESS;
+	status_t _stat = SUCCESS;
 	for (int i = 0; i < mx->row; i++)
 		for (int j = 0; j < mx->col; j++)
-			if (mx->float_mx[i][j] != 0)
+			if (!ISZERO(mx->float_mx[i][j]))
 				mx->floor_mx[i][j] = mx->float_mx[i][j];
-	return stat;
+	return _stat;
 }
