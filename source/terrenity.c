@@ -24,13 +24,13 @@ static void set_stdout_attributes(void) {
 static int allocate_matrix(matrix_t *mx) {
 	if ((mx->row == 0) | (mx->col == 0))
 		return -1;
-	mx->floor_mx = (pixel_t **) calloc(sizeof (pixel_t *), sizeof (mx->row));
-	mx->float_mx = (pixel_t **) calloc(sizeof (pixel_t *), sizeof (mx->row));
+	mx->floor_mx = (pixel_t **) calloc(sizeof (pixel_t *), mx->row);
+	mx->float_mx = (pixel_t **) calloc(sizeof (pixel_t *), mx->row);
 	if ((mx->floor_mx == NULL) | (mx->float_mx == NULL))
 		return -1;
 	for (int i = 0; i < mx->row; i++) {
-		mx->floor_mx[i] = (pixel_t *) calloc(sizeof (pixel_t), sizeof (mx->col));
-		mx->float_mx[i] = (pixel_t *) calloc(sizeof (pixel_t), sizeof (mx->col));
+		mx->floor_mx[i] = (pixel_t *) calloc(sizeof (pixel_t), mx->col);
+		mx->float_mx[i] = (pixel_t *) calloc(sizeof (pixel_t), mx->col);
 		if ((mx->floor_mx[i] == NULL) | (mx->float_mx[i] == NULL))
 			return -1;
 	}

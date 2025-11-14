@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-static inline int rotate_quarter_right(char **src_mx, char **dst_mx, size_t len) {
+static inline int rotate_quarter_right(pixel_t **src_mx, pixel_t **dst_mx, size_t len) {
 	size_t min = 0;
 	size_t max = len - 1;
 	while (min < max) {
