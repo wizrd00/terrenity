@@ -24,13 +24,13 @@ static void set_stdout_attributes(void) {
 static int allocate_matrix(matrix_t *mx) {
 	if ((mx->row == 0) | (mx->col == 0))
 		return -1;
-	mx->floor_mx = (cchar_t *) calloc(sizeof (cchar_t), sizeof (mx->row));
-	mx->float_mx = (cchar_t *) calloc(sizeof (cchar_t), sizeof (mx->row));
+	mx->floor_mx = (pixel_t **) calloc(sizeof (pixel_t *), sizeof (mx->row));
+	mx->float_mx = (pixel_t **) calloc(sizeof (pixel_t *), sizeof (mx->row));
 	if ((mx->floor_mx == NULL) | (mx->float_mx == NULL))
 		return -1;
 	for (int i = 0; i < mx->row; i++) {
-		mx->floor_mx[i] = (cchar_t *) calloc(sizeof (cchar_t), sizeof (mx->col));
-		mx->float_mx[i] = (cchar_t *) calloc(sizeof (cchar_t), sizeof (mx->col));
+		mx->floor_mx[i] = (pixel_t *) calloc(sizeof (pixel_t), sizeof (mx->col));
+		mx->float_mx[i] = (pixel_t *) calloc(sizeof (pixel_t), sizeof (mx->col));
 		if ((mx->floor_mx[i] == NULL) | (mx->float_mx[i] == NULL))
 			return -1;
 	}
@@ -76,4 +76,26 @@ status_t refresh(matrix_t *mx) {
 			if (!ISZERO(mx->float_mx[i][j]))
 				mx->floor_mx[i][j] = mx->float_mx[i][j];
 	return _stat;
+}
+
+status_t reset(matrix_t *mx) {
+	status_t _stat = SUCCESS;
+	for (int i = 0; i < mx->row; i++)
+		for (int j = 0; j < mx->col; j++)
+			mx->float_mx[i][j] = 0;
+	refresh(mx);
+	return _stat;
+}
+
+status_t fill(matrix_t *mx, pixel_t *px) {
+	status_t _stat = SUCCESS;
+	for (int i = 0; i < mx->row; i++)
+		for (int j = 0; j < mx->col; j++)
+			mx->float_mx[i][j] = *px;
+	refresh(mx);
+	return _stat;
+}
+
+status_t rotate(matrix_t *mx, rotate_t *rt) {
+	status_t _stat = SUCCESS;
 }

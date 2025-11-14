@@ -25,6 +25,11 @@ typedef enum {
 	EFFLUSH
 } status_t;
 
+typedef enum {
+	ROTCW,
+	ROTCC
+} rotate_t;
+
 typedef struct {
 	uint8_t ulbd;
 	uint8_t bgnd;
@@ -33,8 +38,8 @@ typedef struct {
 } pixel_t;
 
 typedef struct {
-	pixel_t floor_mx[][];
-	pixel_t float_mx[][];
+	pixel_t **floor_mx;
+	pixel_t **float_mx;
 	size_t row, col;
 } matrix_t;
 
