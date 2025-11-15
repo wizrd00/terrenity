@@ -15,16 +15,16 @@
 #define ISZERO(val) (val.cval == '\0')
 #define ISSQUARE(mx) (mx->row == mx->col)
 
-status_t init(matrix_t *mx, unsigned int vmin, unsigned int vtime);
+status_t mx_init(matrix_t *mx, unsigned int vmin, unsigned int vtime);
 
-status_t render(matrix_t *mx);
+status_t mx_render(matrix_t *mx);
 
-status_t refresh(matrix_t *mx);
+status_t mx_refresh(matrix_t *mx);
 
-status_t reset(matrix_t *mx);
+status_t mx_reset(matrix_t *mx);
 
-status_t fill(matrix_t *mx, pixel_t *px);
+status_t mx_fill(matrix_t *mx, pixel_t *px);
 
-status_t rotate(matrix_t *mx, rotate_t *rt);
+status_t mx_rotate(matrix_t *mx, rotate_t rt);
 
 #endif

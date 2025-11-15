@@ -37,7 +37,7 @@ static int allocate_matrix(matrix_t *mx) {
 	return 0;
 }
 
-status_t init(matrix_t *mx, unsigned int vmin, unsigned int vtime) {
+status_t mx_init(matrix_t *mx, unsigned int vmin, unsigned int vtime) {
 	status_t _stat = SUCCESS;
 	struct winsize ws;
 	tcgetattr(stdin, &default_stdin_tp);	
@@ -51,7 +51,7 @@ status_t init(matrix_t *mx, unsigned int vmin, unsigned int vtime) {
 	return _stat;
 }
 
-status_t render(matrix_t *mx) {
+status_t mx_render(matrix_t *mx) {
 	status_t _stat = SUCCESS;
 	char buf[PIXEL_FORMAT_SIZE] = {0};
 	uint8_t sec0 = 0;
@@ -69,7 +69,7 @@ status_t render(matrix_t *mx) {
 	return _stat;
 }
 
-status_t refresh(matrix_t *mx) {
+status_t mx_refresh(matrix_t *mx) {
 	status_t _stat = SUCCESS;
 	for (int i = 0; i < mx->row; i++)
 		for (int j = 0; j < mx->col; j++)
@@ -78,7 +78,7 @@ status_t refresh(matrix_t *mx) {
 	return _stat;
 }
 
-status_t reset(matrix_t *mx) {
+status_t mx_reset(matrix_t *mx) {
 	status_t _stat = SUCCESS;
 	for (int i = 0; i < mx->row; i++)
 		for (int j = 0; j < mx->col; j++)
@@ -87,7 +87,7 @@ status_t reset(matrix_t *mx) {
 	return _stat;
 }
 
-status_t fill(matrix_t *mx, pixel_t *px) {
+status_t mx_fill(matrix_t *mx, pixel_t *px) {
 	status_t _stat = SUCCESS;
 	for (int i = 0; i < mx->row; i++)
 		for (int j = 0; j < mx->col; j++)
@@ -96,6 +96,20 @@ status_t fill(matrix_t *mx, pixel_t *px) {
 	return _stat;
 }
 
-status_t rotate(matrix_t *mx, rotate_t *rt) {
+status_t mx_rotate(matrix_t *mx, rotate_t rt) {
 	status_t _stat = SUCCESS;
+	CHECK_EQUAL(mx->row, mx->col, ESQUARE);
+	refresh(mx);
+	switch (rt) {
+		case ROTCW :
+			rotate_quarter_right(mx->floor_mx, mx->float_mx, mx->row);
+			break;
+		case ROTCC :
+			rotate_quarter_left(mx->floor_mx, mx->float_mx, mx->row);
+			break;
+		default :
+			return _stat = INVROTT;
+	}
+	refresh(mx);
+	return _stat;
 }

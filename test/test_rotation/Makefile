@@ -17,9 +17,9 @@ test.elf : $(TEST_OBJ) $(ROTATION_HDR)
 	@echo linking object files $<
 	$(CC) $(CFLAGS) $(UNITY_LIB_FLAGS) -o $@ $<
 
-$(TEST_OBJ) : $(TEST_SRC)
+$(TEST_OBJ) : $(TEST_SRC) $(ROTATION_HDR)
 	@echo compiling $^
-	$(CC) -c $(CFLAGS) -I$(INCLUDE_DIR) -I$(UNITY_DIR) -o $@ $^
+	$(CC) -c $(CFLAGS) -I$(INCLUDE_DIR) -I$(UNITY_DIR) -o $@ $<
 
 memcheck : test.elf
 	@echo start checking test.elf for any memory bug

@@ -19,10 +19,12 @@
 typedef enum {
 	SUCCESS,
 	FAILURE,
+	INVROTT,
 	NOIOCTL,
 	ECALLOC,
 	EFWRITE,
-	EFFLUSH
+	EFFLUSH,
+	ESQUARE
 } status_t;
 
 typedef enum {
