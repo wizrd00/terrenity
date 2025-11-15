@@ -44,7 +44,6 @@ void setUp(void) {
 }
 
 void tearDown(void) {
-	printf("freeing...\n");
 	for (size_t i = 0; i < 4; i++) {
 		free(dst_mx0[i]);
 		free(src_mx0[i]);
@@ -61,10 +60,8 @@ void tearDown(void) {
 }
 
 void test_rotate_quarter_right(void) {
-	//rotate_quarter_right((pixel_t **) src_mx0, (pixel_t **) dst_mx0, 4);	
-	//rotate_quarter_right((pixel_t **) src_mx1, (pixel_t **) dst_mx1, 5);	
-
-	rotate_quarter_right(src_mx0, dst_mx0, 4);	
+	// I temporary change arguments type to char just for testing
+	rotate_quarter_right(src_mx0, dst_mx0, 4);
 	rotate_quarter_right(src_mx1, dst_mx1, 5);	
 	printf("%c %c %c %c\n", src_mx0[0][0], src_mx0[0][1], src_mx0[0][2], src_mx0[0][3]);
 	printf("%c %c %c %c\n", src_mx0[1][0], src_mx0[1][1], src_mx0[1][2], src_mx0[1][3]);
@@ -91,8 +88,39 @@ void test_rotate_quarter_right(void) {
 	return;
 }
 
+void test_rotate_quarter_left(void) {
+	// I temporary change arguments type to char just for testing
+	rotate_quarter_left(src_mx0, dst_mx0, 4);
+	rotate_quarter_left(src_mx1, dst_mx1, 5);	
+	printf("%c %c %c %c\n", src_mx0[0][0], src_mx0[0][1], src_mx0[0][2], src_mx0[0][3]);
+	printf("%c %c %c %c\n", src_mx0[1][0], src_mx0[1][1], src_mx0[1][2], src_mx0[1][3]);
+	printf("%c %c %c %c\n", src_mx0[2][0], src_mx0[2][1], src_mx0[2][2], src_mx0[2][3]);
+	printf("%c %c %c %c\n\n", src_mx0[3][0], src_mx0[3][1], src_mx0[3][2], src_mx0[3][3]);
+
+	printf("%c %c %c %c\n", dst_mx0[0][0], dst_mx0[0][1], dst_mx0[0][2], dst_mx0[0][3]);
+	printf("%c %c %c %c\n", dst_mx0[1][0], dst_mx0[1][1], dst_mx0[1][2], dst_mx0[1][3]);
+	printf("%c %c %c %c\n", dst_mx0[2][0], dst_mx0[2][1], dst_mx0[2][2], dst_mx0[2][3]);
+	printf("%c %c %c %c\n\n", dst_mx0[3][0], dst_mx0[3][1], dst_mx0[3][2], dst_mx0[3][3]);
+
+	printf("%c %c %c %c %c\n", src_mx1[0][0], src_mx1[0][1], src_mx1[0][2], src_mx1[0][3], src_mx1[0][4]);
+	printf("%c %c %c %c %c\n", src_mx1[1][0], src_mx1[1][1], src_mx1[1][2], src_mx1[1][3], src_mx1[1][4]);
+	printf("%c %c %c %c %c\n", src_mx1[2][0], src_mx1[2][1], src_mx1[2][2], src_mx1[2][3], src_mx1[2][4]);
+	printf("%c %c %c %c %c\n", src_mx1[3][0], src_mx1[3][1], src_mx1[3][2], src_mx1[3][3], src_mx1[3][4]);
+	printf("%c %c %c %c %c\n\n", src_mx1[4][0], src_mx1[4][1], src_mx1[4][2], src_mx1[4][3], src_mx1[4][4]);
+
+	printf("%c %c %c %c %c\n", dst_mx1[0][0], dst_mx1[0][1], dst_mx1[0][2], dst_mx1[0][3], dst_mx1[0][4]);
+	printf("%c %c %c %c %c\n", dst_mx1[1][0], dst_mx1[1][1], dst_mx1[1][2], dst_mx1[1][3], dst_mx1[1][4]);
+	printf("%c %c %c %c %c\n", dst_mx1[2][0], dst_mx1[2][1], dst_mx1[2][2], dst_mx1[2][3], dst_mx1[2][4]);
+	printf("%c %c %c %c %c\n", dst_mx1[3][0], dst_mx1[3][1], dst_mx1[3][2], dst_mx1[3][3], dst_mx1[3][4]);
+	printf("%c %c %c %c %c\n\n", dst_mx1[4][0], dst_mx1[4][1], dst_mx1[4][2], dst_mx1[4][3], dst_mx1[4][4]);
+	fgetc(stdin);
+	TEST_ASSERT_EQUAL('y', fgetc(stdin));
+	return;
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_rotate_quarter_right);
+	RUN_TEST(test_rotate_quarter_left);
 	return UNITY_END();
 }
