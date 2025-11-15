@@ -4,21 +4,22 @@ struct termios default_stdin_tp;
 struct termios default_stdout_tp;
 struct termios stdin_tp;
 struct termios stdout_tp;
+object_t link_objects[2];
 
-static void set_stdin_attributes(unsigned int vmin, unsigned int vtime) {
+static int set_stdin_attributes(void) {
 	stdin_tp.c_iflag &= ~(BRKINT | ICRNL);
 	stdin_tp.c_iflag |= (IGNBRK | IGNPAR);
 	stdin_tp.c_lflag &= ~(ECHO | ECHOE | ECHOK | ECHONL | ICANON | IEXTEN | ISIG);
-	stdin_tp.c_cc[VMIN] = (cc_t) vmin;
-	stdin_tp.c_cc[VTIME] = (cc_t) vtime;
-	tcsetattr(stdin, TCSANOW, &stdin_tp);
-	return;
+	if (tcsetattr(stdin, TCSANOW, &stdin_tp) != 0)
+		return -1;
+	return 0;
 }
 
-static void set_stdout_attributes(void) {
+static int set_stdout_attributes(void) {
 	stdout_tp.c_lflag &= ~(ICANON | IEXTEN | ISIG);
-	tcsetattr(stdout, TCSANOW, &stdout_tp);
-	return;
+	if (tcsetattr(stdout, TCSANOW, &stdout_tp) != 0)
+		return -1;
+	return 0;
 }
 
 static int allocate_matrix(matrix_t *mx) {
@@ -37,17 +38,30 @@ static int allocate_matrix(matrix_t *mx) {
 	return 0;
 }
 
-status_t mx_init(matrix_t *mx, unsigned int vmin, unsigned int vtime) {
+static int allocate_object(void) {
+	object_t *new_obj = (object_t *) malloc(sizeof (object_t));
+	new_obj->prev = link_object[1].prev;
+	new_obj->next = link_object + 1;
+	link_object[1].prev->next = new_obj;
+	link_object[1].prev = new_obj;
+	return 0;
+}
+
+status_t mx_init(matrix_t *mx) {
 	status_t _stat = SUCCESS;
 	struct winsize ws;
-	tcgetattr(stdin, &default_stdin_tp);	
-	tcgetattr(stdout, &default_stdout_tp);	
-	set_stdin_attributes(vmin, vtime);
-	set_stdout_attributes();
+	CHECH_EQUAL(0, tcgetattr(stdin, &default_stdin_tp), NOTCGET);	
+	CHECK_EQUAL(0, tcgetattr(stdout, &default_stdout_tp), NOTCGET);
+	CHECK_EQUAL(0, set_stdin_attributes(), NOTCSET);
+	CHECK_EQUAL(0, set_stdout_attributes(), NOTCSET);
 	CHECK_NOTEQUAL(-1, ioctl(stdout, TIOCGWINSZ, &ws), NOIOCTL);
 	mx->row = ws.ws_row;
 	mx->col = ws.ws_col;
 	CHECK_NOTEQUAL(-1, allocate_matrix(mx), ECALLOC);
+	link_object[0].shape = EMPTY;
+	link_object[1].shape = EMPTY;
+	link_object[0].next = link_object + 1;
+	link_object[1].prev = link_object;
 	return _stat;
 }
 
@@ -96,6 +110,24 @@ status_t mx_fill(matrix_t *mx, pixel_t *px) {
 	return _stat;
 }
 
+status_t mx_popup(matrix_t *mx, object_t *obj) {
+	status_t _stat = SUCCESS;
+	switch (shape) {
+		case RECTANGLE :
+			CHECK_EQUAL(0, draw_shape_rectangle(mx->float_mx, obj), ERRDRAW);
+			break;
+		case CIRCLE :
+			CHECK_EQUAL(0, draw_shape_circle(mx->float_mx, obj), ERRDRAW);
+			break;
+		default :
+			return _stat = NOSHAPE;
+	}
+	refresh(mx);
+	CHECK_EQUAL(0, allocate_object(), EMALLOC)
+	memcpy(link_object[1].prev, obj, sizeof (object_t));
+	return _stat;
+}
+
 status_t mx_rotate(matrix_t *mx, rotate_t rt) {
 	status_t _stat = SUCCESS;
 	CHECK_EQUAL(mx->row, mx->col, ESQUARE);
@@ -111,5 +143,30 @@ status_t mx_rotate(matrix_t *mx, rotate_t rt) {
 			return _stat = INVROTT;
 	}
 	refresh(mx);
+	return _stat;
+}
+
+status_t mx_readkey(unsigned char *key, unsigned int vmin, unsigned int vtime) {
+	status_t _stat = SUCCESS;
+	int tmp_val = getchar();
+	stdin_tp.c_cc[VMIN] = (cc_t) vmin;
+	stdin_tp.c_cc[VTIME] = (cc_t) vtime;
+	CHECK_EQUAL(0, tcsetattr(stdin, TSCANOW, &stdin_tp), NOTCSET);
+	CHECK_NOTEQUAL(EOF, tmp_val, ERRREAD);
+	*key = (unsigned char) tmp_val;
+	return _stat;
+}
+
+status_t mx_echo_on(void) {
+	status_t _stat = SUCCESS;
+	stdin_tp.c_lflag |= (ECHO | ECHOE | ECHOK | ECHONL);
+	CHECK_EQUAL(0, tcsetattr(stdin, TCSANOW, &stdin_tp), NOTCSET);
+	return _stat;
+}
+
+status_t mx_echo_off(void) {
+	status_t _stat = SUCCESS;
+	stdin_tp.c_lflag &= ~(ECHO | ECHOE | ECHOK | ECHONL);
+	CHECK_EQUAL(0, tcsetattr(stdin, TCSANOW, &stdin_tp), NOTCSET);
 	return _stat;
 }

@@ -20,8 +20,14 @@ typedef enum {
 	SUCCESS,
 	FAILURE,
 	INVROTT,
+	NOTCGET,
+	NOTCSET,
 	NOIOCTL,
+	NOSHAPE,
+	ERRREAD,
+	ERRDRAW,
 	ECALLOC,
+	EMALLOC,
 	EFWRITE,
 	EFFLUSH,
 	ESQUARE
@@ -31,6 +37,23 @@ typedef enum {
 	ROTCW,
 	ROTCC
 } rotate_t;
+
+typedef enum {
+	EMPTY,
+	RECTANGLE,
+	CIRCLE
+} shape_t;
+
+typedef enum {
+	BLACK,
+	RED,
+	GREEN,
+	YELLOW,
+	BLUE,
+	PURPLE,
+	CYAN,
+	WHITE
+} color_t;
 
 typedef struct {
 	uint8_t ulbd;
@@ -44,5 +67,15 @@ typedef struct {
 	pixel_t **float_mx;
 	size_t row, col;
 } matrix_t;
+
+typedef struct object {
+	shape_t shape;
+	pixel_t pixel;
+	bool fill;
+	size_t len, wid;
+	size_t row, col;
+	struct object *prev;
+	struct object *next;
+} object_t;
 
 #endif
