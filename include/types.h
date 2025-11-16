@@ -30,7 +30,8 @@ typedef enum {
 	EMALLOC,
 	EFWRITE,
 	EFFLUSH,
-	ESQUARE
+	ESQUARE,
+	BADSIZE
 } status_t;
 
 typedef enum {
@@ -41,7 +42,8 @@ typedef enum {
 typedef enum {
 	EMPTY,
 	RECTANGLE,
-	CIRCLE
+	RHOMBUS,
+	TRIANGLE
 } shape_t;
 
 typedef enum {
@@ -73,7 +75,7 @@ typedef struct object {
 	pixel_t pixel;
 	bool fill;
 	size_t len, wid;
-	size_t row, col;
+	size_t x, y;
 	struct object *prev;
 	struct object *next;
 } object_t;

@@ -114,11 +114,13 @@ status_t mx_popup(matrix_t *mx, object_t *obj) {
 	status_t _stat = SUCCESS;
 	switch (shape) {
 		case RECTANGLE :
-			CHECK_EQUAL(0, draw_shape_rectangle(mx->float_mx, obj), ERRDRAW);
+			CHECK_EQUAL(0, draw_shape_rectangle(mx, obj), ERRDRAW);
 			break;
-		case CIRCLE :
-			CHECK_EQUAL(0, draw_shape_circle(mx->float_mx, obj), ERRDRAW);
+		case RHOMBUS :
+			CHECK_EQUAL(0, draw_shape_rhombus(mx, obj), ERRDRAW);
 			break;
+		case TRIANGLE :
+			CHECK_EQUAL(0, draw_shape_triangle(mx, obj), ERRDRAW);
 		default :
 			return _stat = NOSHAPE;
 	}
