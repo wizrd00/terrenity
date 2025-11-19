@@ -31,7 +31,8 @@ typedef enum {
 	EFWRITE,
 	EFFLUSH,
 	ESQUARE,
-	BADSIZE
+	BADSIZE,
+	BADSHAP
 } status_t;
 
 typedef enum {
