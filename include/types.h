@@ -10,6 +10,9 @@
 #define CHECK_STAT(val)\
 	do {if (val != SUCCESS) {return _stat = val;}} while (0)
 
+#define CHECK_PTR(val, err)\
+	do {if (val == NULL) {return _stat = err;}} while (0)
+
 #define CHECK_EQUAL(val0, val1, err)\
 	do {if (val0 != val1) {return _stat = err;}} while (0)
 

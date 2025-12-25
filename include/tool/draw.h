@@ -3,7 +3,8 @@
 
 #include "types.h"
 
-static inline status_t draw_shape_rectangle(matrix_t *mx, object_t *obj) {
+static inline status_t draw_shape_rectangle(matrix_t *mx, object_t *obj)
+{
 	status_t _stat = SUCCESS;
 	CHECK_EQUAL(RECTANGLE, obj->shape, BADSHAP);
 	if ((obj->x + obj->len > mx->col) || (obj->y + obj->wid > mx->row))
@@ -21,7 +22,8 @@ static inline status_t draw_shape_rectangle(matrix_t *mx, object_t *obj) {
 	return _stat;
 }
 
-static inline status_t draw_shape_rhombus(matrix_t *mx, object_t *obj) {
+static inline status_t draw_shape_rhombus(matrix_t *mx, object_t *obj)
+{
 	status_t _stat = SUCCESS;
 	CHECK_EQUAL(RHOMBUS, obj->shape, BADSHAP);
 	if ((obj->len != obj->wid) || (obj->x + 1 < obj->len) || (obj->x + obj->len - 1 > mx->col) || (obj->y + obj->len + 3 > mx->row))
@@ -35,12 +37,33 @@ static inline status_t draw_shape_rhombus(matrix_t *mx, object_t *obj) {
 		mx->float_mx[tail][max] = obj->pixel;
 		head++;
 		tail--;
-		min--;
 		max++;
+		min--;
 	}
 	return _stat;
 }
 
-static inline status_t draw_shape_triangle(matrix_t *mx, object_t *obj) {}
+static inline status_t draw_shape_triangle(matrix_t *mx, object_t *obj)
+{
+	status_t _stat = SUCCESS;
+	return _stat;
+}
+
+static inline status_t draw_shape(matrix_t *mx, object_t *obj)
+{
+	status_t _stat = SUCCESS;
+	switch (obj->shape) {
+		case RECTANGLE :
+			CHECK_STAT(draw_shape_rectangle(mx, obj));
+			break;
+		case RHOMBUS :
+			CHECK_STAT(draw_shape_rhombus(mx, obj));
+			break;
+		case TRIANGLE :
+			CHECK_STAT(draw_shape_triangle(mx, obj));
+			break;
+	}
+	return _stat;
+}
 
 #endif
