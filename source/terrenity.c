@@ -195,6 +195,14 @@ status_t mx_popup(object_t *obj, object_t *hdl)
 	return _stat;
 }
 
+status_t mx_popdown(object_t *obj)
+{
+	status_t _stat = SUCCESS;
+	obj->prev->next = obj->next->prev;
+	free((void *) obj);
+	return _stat;
+}
+
 status_t mx_rotate(matrix_t *mx, rotate_t rt)
 {
 	status_t _stat = SUCCESS;
