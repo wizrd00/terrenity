@@ -6,7 +6,8 @@
 
 pixel_t **src_mx0;
 
-void setUp(void) {
+void setUp(void)
+{
 	pixel_t p = {0, 0, 0, 0};
 	src_mx0 = (pixel_t **) malloc(sizeof (pixel_t *) * 9);
 	for (int i = 0; i < 9; i++) {
@@ -20,14 +21,16 @@ void setUp(void) {
 	return;
 }
 
-void tearDown(void) {
+void tearDown(void)
+{
 	for (int i = 0; i < 9; i++)
 		free(src_mx0[i]);
 	free(src_mx0);
 	return;
 }
 
-void test_draw_shape_rectangle0(void) {
+void test_draw_shape_rectangle0(void)
+{
 	matrix_t mx = {.float_mx = src_mx0, .row = 9, .col = 16};
 	pixel_t zeropixel = {0, 0, 0, 0};
 	object_t obj = {
@@ -58,7 +61,8 @@ void test_draw_shape_rectangle0(void) {
 	return;
 }
 
-void test_draw_shape_rectangle1(void) {
+void test_draw_shape_rectangle1(void)
+{
 	matrix_t mx = {.float_mx = src_mx0, .row = 9, .col = 16};
 	pixel_t zeropixel = {0, 0, 0, 0};
 	object_t obj = {
@@ -74,7 +78,8 @@ void test_draw_shape_rectangle1(void) {
 	return;
 }
 
-void test_draw_shape_rhombus0(void) {
+void test_draw_shape_rhombus0(void)
+{
 	matrix_t mx = {.float_mx = src_mx0, .row = 9, .col = 16};
 	pixel_t zeropixel = {0, 0, 0, 0};
 	object_t obj = {
@@ -106,7 +111,8 @@ void test_draw_shape_rhombus0(void) {
 	return;
 }
 
-int main(void) {
+int main(void)
+{
 	UNITY_BEGIN();
 	RUN_TEST(test_draw_shape_rectangle0);
 	RUN_TEST(test_draw_shape_rectangle1);

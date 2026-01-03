@@ -15,9 +15,9 @@
 #define ISZERO(val) (val.cval == '\0')
 #define ISSQUARE(mx) (mx->row == mx->col)
 
-status_t mx_init(matrix_t *mx);
+status_t mx_init(matrix_t *mx, bool set_input, bool set_output);
 
-status_t mx_exit(matrix_t *mx);
+status_t mx_deinit(matrix_t *mx);
 
 status_t mx_render(matrix_t *mx);
 
@@ -33,7 +33,9 @@ status_t mx_popdown(object_t *obj);
 
 status_t mx_rotate(matrix_t *mx, rotate_t rt);
 
-status_t mx_readkey(unsigned char *key, unsigned int vmin, unsigned int vtime);
+status_t mx_readkey(unsigned char *key, unsigned int vtime);
+
+status_t mx_readline(char *line, size_t size);
 
 status_t mx_echo_on(void);
 

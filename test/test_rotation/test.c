@@ -9,7 +9,8 @@ char **src_mx0;
 char **dst_mx1;
 char **src_mx1;
 
-void setUp(void) {
+void setUp(void)
+{
 	char r0[] = {'a', 'b', 'c', 'd'};
 	char r1[] = {'x', 'y', 'z', 't'};
 	char r2[] = {'i', 'j', 'k', 'l'};
@@ -43,7 +44,8 @@ void setUp(void) {
 	return;
 }
 
-void tearDown(void) {
+void tearDown(void)
+{
 	for (size_t i = 0; i < 4; i++) {
 		free(dst_mx0[i]);
 		free(src_mx0[i]);
@@ -59,7 +61,8 @@ void tearDown(void) {
 	return;
 }
 
-void test_rotate_quarter_right(void) {
+void test_rotate_quarter_right(void)
+{
 	// I temporary change arguments type to char just for testing
 	rotate_quarter_right(src_mx0, dst_mx0, 4);
 	rotate_quarter_right(src_mx1, dst_mx1, 5);	
@@ -88,7 +91,8 @@ void test_rotate_quarter_right(void) {
 	return;
 }
 
-void test_rotate_quarter_left(void) {
+void test_rotate_quarter_left(void)
+{
 	// I temporary change arguments type to char just for testing
 	rotate_quarter_left(src_mx0, dst_mx0, 4);
 	rotate_quarter_left(src_mx1, dst_mx1, 5);	
@@ -118,7 +122,8 @@ void test_rotate_quarter_left(void) {
 	return;
 }
 
-int main(void) {
+int main(void)
+{
 	UNITY_BEGIN();
 	RUN_TEST(test_rotate_quarter_right);
 	RUN_TEST(test_rotate_quarter_left);
