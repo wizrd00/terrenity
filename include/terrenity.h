@@ -12,7 +12,6 @@
 
 #define PIXEL_FORMAT "\x1b[%d;%d;%d;%dm%c\x1b[0m"
 #define PIXEL_FORMAT_SIZE 16 * sizeof (char)
-#define ISZERO(val) (val.cval == '\0')
 #define ISSQUARE(mx) (mx->row == mx->col)
 
 status_t mx_init(matrix_t *mx, bool set_input, bool set_output);

@@ -152,8 +152,7 @@ status_t mx_refresh(matrix_t *mx)
 	status_t _stat = SUCCESS;
 	for (int i = 0; i < mx->row; i++)
 		for (int j = 0; j < mx->col; j++)
-			if (!ISZERO(mx->float_mx[i][j]))
-				mx->floor_mx[i][j] = mx->float_mx[i][j];
+			mx->floor_mx[i][j] = mx->float_mx[i][j];
 	return _stat;
 }
 
