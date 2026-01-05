@@ -60,8 +60,8 @@ static status_t render_matrix(matrix_t *mx)
 	uint8_t sec0 = 0, sec1 = 0, underline = 0, bold = 0;
 	for (int i = 0; i < mx->row; i++)
 		for (int j = 0; j < mx->col; j++) {
-			underline = mx->floor_mx[i][j].ulbd >> 26;
-			bold = mx->floor_mx[i][j].ulbd >> 24;
+			underline = mx->floor_mx[i][j].ulbd;
+			bold = mx->floor_mx[i][j].ulbd;
 			sec0 = (underline != 0) ? underline : bold;
 			sec1 = (bold != 0) ? bold : underline;
 			fprintf(stdout, PIXEL_FORMAT, sec0, sec1, mx->floor_mx[i][j].bgnd, mx->floor_mx[i][j].fgnd, mx->floor_mx[i][j].cval);

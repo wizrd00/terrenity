@@ -19,7 +19,7 @@ void tearDown(void)
 void test_fill(void)
 {
 	status_t _stat = SUCCESS;
-	pixel_t px = {.ulbd = NONE, .bgnd = HBGWHITE, .fgnd = HFGWHITE, .cval = ' '};
+	pixel_t px = {.ulbd = UNDERLINE | BOLD, .bgnd = LBGBLACK, .fgnd = LFGPURPLE, .cval = 'A'};
 	_stat = mx_fill(&mx, &px);
 	TEST_ASSERT_EQUAL(SUCCESS, _stat);
 	_stat = mx_render(&mx);
