@@ -61,18 +61,17 @@ typedef enum {
 	WHITE
 } color_t;
 
+typedef enum {
+	YREQ,
+	NREQ
+} update_t;
+
 typedef struct {
 	uint8_t ulbd;
 	uint8_t bgnd;
 	uint8_t fgnd;
 	uint8_t cval;
 } pixel_t;
-
-typedef struct {
-	pixel_t **floor_mx;
-	pixel_t **float_mx;
-	size_t row, col;
-} matrix_t;
 
 typedef struct object {
 	shape_t shape;
@@ -83,5 +82,13 @@ typedef struct object {
 	struct object *prev;
 	struct object *next;
 } object_t;
+
+typedef struct {
+	pixel_t **floor_mx;
+	pixel_t **float_mx;
+	object_t lnobject[2];
+	update_t update;
+	size_t row, col;
+} matrix_t;
 
 #endif

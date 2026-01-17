@@ -2,6 +2,7 @@
 #define DRAW_H
 
 #include "types.h"
+#include <stdio.h>
 
 static inline status_t draw_shape_rectangle(matrix_t *mx, object_t *obj)
 {
