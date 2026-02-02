@@ -68,7 +68,7 @@ void test_popup(void)
 	while (1) {
 		_stat = mx_render(&mx);
 		TEST_ASSERT_EQUAL(SUCCESS, _stat);
-		TEST_ASSERT_EQUAL(SUCCESS, mx_readkey(&key, 10));
+		TEST_ASSERT_EQUAL(SUCCESS, mx_readkey(&key, 50));
 		if (key == 'y') {
 			hdl0->pixel.fgnd = HFGYELLOW;
 			hdl0->pixel.bgnd = HBGYELLOW;
