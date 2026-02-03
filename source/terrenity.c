@@ -28,13 +28,13 @@ static status_t allocate_matrix(matrix_t *mx)
 	status_t _stat = SUCCESS;
 	CHECK_NOTEQUAL(0, mx->row, BADSIZE);
 	CHECK_NOTEQUAL(0, mx->col, BADSIZE);
-	mx->floor_mx = (pixel_t **) calloc(sizeof (pixel_t *), mx->row);
-	mx->float_mx = (pixel_t **) calloc(sizeof (pixel_t *), mx->row);
+	mx->floor_mx = (pixel_t **) calloc(sizeof(pixel_t *), mx->row);
+	mx->float_mx = (pixel_t **) calloc(sizeof(pixel_t *), mx->row);
 	CHECK_PTR(mx->floor_mx, ECALLOC);
 	CHECK_PTR(mx->float_mx, ECALLOC);
 	for (int i = 0; i < mx->row; i++) {
-		mx->floor_mx[i] = (pixel_t *) calloc(sizeof (pixel_t), mx->col);
-		mx->float_mx[i] = (pixel_t *) calloc(sizeof (pixel_t), mx->col);
+		mx->floor_mx[i] = (pixel_t *) calloc(sizeof(pixel_t), mx->col);
+		mx->float_mx[i] = (pixel_t *) calloc(sizeof(pixel_t), mx->col);
 		CHECK_PTR(mx->floor_mx[i], ECALLOC);
 		CHECK_PTR(mx->float_mx[i], ECALLOC);
 	}
@@ -72,7 +72,7 @@ static status_t render_matrix(matrix_t *mx)
 static status_t allocate_object(matrix_t *mx)
 {
 	status_t _stat = SUCCESS;
-	object_t *new_obj = (object_t *) malloc(sizeof (object_t));
+	object_t *new_obj = (object_t *) malloc(sizeof(object_t));
 	CHECK_PTR(new_obj, EMALLOC);
 	new_obj->prev = mx->lnobject[1].prev;
 	new_obj->next = mx->lnobject + 1;

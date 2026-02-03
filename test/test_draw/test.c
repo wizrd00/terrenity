@@ -9,9 +9,9 @@ pixel_t **src_mx0;
 void setUp(void)
 {
 	pixel_t p = {0, 0, 0, 0};
-	src_mx0 = (pixel_t **) malloc(sizeof (pixel_t *) * 9);
+	src_mx0 = (pixel_t **) malloc(sizeof(pixel_t *) * 9);
 	for (int i = 0; i < 9; i++) {
-		src_mx0[i] = (pixel_t *) malloc(sizeof (pixel_t) * 16);
+		src_mx0[i] = (pixel_t *) malloc(sizeof(pixel_t) * 16);
 	}
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 16; j++) {

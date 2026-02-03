@@ -11,7 +11,7 @@
 #include <termios.h>
 
 #define PIXEL_FORMAT "\x1b[%d;%d;%d;%dm%c\x1b[0m"
-#define PIXEL_FORMAT_SIZE 16 * sizeof (char)
+#define PIXEL_FORMAT_SIZE 16 * sizeof(char)
 #define ISSQUARE(mx) (mx->row == mx->col)
 
 status_t mx_init(matrix_t *mx, bool set_input, bool set_output);
