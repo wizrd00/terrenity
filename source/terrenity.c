@@ -7,9 +7,7 @@ struct termios stdout_tp;
 
 static int set_stdin_attributes(void)
 {
-	stdin_tp.c_iflag &= ~(BRKINT | ICRNL);
-	stdin_tp.c_iflag |= (IGNBRK | IGNPAR);
-	stdin_tp.c_lflag &= ~(ECHO | ECHOE | ECHOK | ECHONL | ICANON | IEXTEN | ISIG);
+	cfmakeraw(&stdin_tp);
 	if (tcsetattr(fileno(stdin), TCSANOW, &stdin_tp) != 0)
 		return -1;
 	return 0;
@@ -17,7 +15,7 @@ static int set_stdin_attributes(void)
 
 static int set_stdout_attributes(void)
 {
-	stdout_tp.c_lflag &= ~(ICANON | IEXTEN | ISIG);
+	cfmakeraw(&stdout_tp);
 	if (tcsetattr(fileno(stdout), TCSANOW, &stdout_tp) != 0)
 		return -1;
 	return 0;
@@ -234,27 +232,17 @@ status_t mx_rotate(matrix_t *mx, rotate_t rt)
 status_t mx_readkey(unsigned char *key, unsigned char timeout)
 {
 	status_t _stat = SUCCESS;
+	cc_t tmp_vmin = stdin_tp.c_cc[VMIN], tmp_vtime = stdin_tp.c_cc[VTIME];
 	int tmp_val;
 	stdin_tp.c_cc[VMIN] = (cc_t) 0;
 	stdin_tp.c_cc[VTIME] = (cc_t) timeout;
 	CHECK_EQUAL(0, tcsetattr(fileno(stdin), TCSANOW, &stdin_tp), NOTCSET);
-	CHECK_EQUAL(0, fflush(stdin), EFFLUSH);
 	tmp_val = getchar();
+	stdin_tp.c_cc[VMIN] = tmp_vmin;
+	stdin_tp.c_cc[VTIME] = tmp_vtime;
+	CHECK_EQUAL(0, tcsetattr(fileno(stdin), TCSANOW, &stdin_tp), NOTCSET);
 	CHECK_NOTEQUAL(EOF, tmp_val, ERRREAD);
 	*key = (unsigned char) tmp_val;
-	CHECK_EQUAL(0, fflush(stdin), EFFLUSH);
-	return _stat;
-}
-
-status_t mx_readline(char *line, size_t size)
-{
-	status_t _stat = SUCCESS;
-	CHECK_EQUAL(0, tcsetattr(fileno(stdin), TCSANOW, &default_stdin_tp), NOTCSET);
-	CHECK_EQUAL(0, fflush(stdin), EFFLUSH);
-	CHECK_PTR(fgets(line, size, stdin), FAILURE);
-	CHECK_EQUAL(0, fflush(stdin), EFFLUSH);
-	CHECK_EQUAL(0, tcsetattr(fileno(stdin), TCSANOW, &stdin_tp), NOTCSET);
-	CHECK_EQUAL(0, fflush(stdin), EFFLUSH);
 	return _stat;
 }
 

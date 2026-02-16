@@ -34,8 +34,6 @@ status_t mx_rotate(matrix_t *mx, rotate_t rt);
 
 status_t mx_readkey(unsigned char *key, unsigned char timeout);
 
-status_t mx_readline(char *line, size_t size);
-
 status_t mx_clear(void);
 
 status_t mx_echo_on(void);
