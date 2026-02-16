@@ -32,6 +32,8 @@ status_t mx_popdown(matrix_t *mx, object_t *obj);
 
 status_t mx_rotate(matrix_t *mx, rotate_t rt);
 
+status_t mx_unlock(matrix_t *mx);
+
 status_t mx_readkey(unsigned char *key, unsigned char timeout);
 
 status_t mx_clear(void);

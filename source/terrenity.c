@@ -105,7 +105,8 @@ static status_t render_object(matrix_t *mx)
 status_t mx_init(matrix_t *mx, bool set_input, bool set_output)
 {
 	status_t _stat = SUCCESS;
-	struct winsize ws;
+	if ((mx->row == 0) || (mx->col == 0))
+		return _stat = BADSIZE;
 	CHECK_NOTEQUAL(EOF, fputs(CLEAR, stdout), ERRWRIT);
 	CHECK_EQUAL(0, tcgetattr(fileno(stdin), &default_stdin_tp), NOTCGET);	
 	CHECK_EQUAL(0, tcgetattr(fileno(stdout), &default_stdout_tp), NOTCGET);
@@ -113,9 +114,6 @@ status_t mx_init(matrix_t *mx, bool set_input, bool set_output)
 		CHECK_EQUAL(0, set_stdin_attributes(), NOTCSET);
 	if (set_output)
 		CHECK_EQUAL(0, set_stdout_attributes(), NOTCSET);
-	CHECK_NOTEQUAL(-1, ioctl(fileno(stdout), TIOCGWINSZ, &ws), NOIOCTL);
-	mx->row = ws.ws_row;
-	mx->col = ws.ws_col;
 	mx->update = YREQ;
 	CHECK_STAT(allocate_matrix(mx));
 	mx->lnobject[0].shape = EMPTY;
@@ -226,6 +224,13 @@ status_t mx_rotate(matrix_t *mx, rotate_t rt)
 			return _stat = INVROTT;
 	}
 	CHECK_STAT(mx_refresh(mx));
+	return _stat;
+}
+
+status_t mx_unlock(matrix_t *mx)
+{
+	status_t _stat = SUCCESS;
+	mx->update = YREQ;
 	return _stat;
 }
 

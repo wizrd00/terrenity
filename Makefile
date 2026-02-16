@@ -1,3 +1,4 @@
+VERSION := 0.9.0
 CC := pcc
 CFLAGS := -std=c99 -O3 -g -Wc,-Werror=implicit-function-declaration,-Werror=missing-prototypes,-Werror=pointer-sign,-Werror=sign-compare,-Werror=strict-prototypes,-Werror=shadow
 CFLAGS_PIC := -shared -fPIC 
