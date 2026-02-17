@@ -46,8 +46,7 @@ typedef enum {
 typedef enum {
 	EMPTY,
 	RECTANGLE,
-	RHOMBUS,
-	TRIANGLE
+	RHOMBUS
 } shape_t;
 
 typedef enum {

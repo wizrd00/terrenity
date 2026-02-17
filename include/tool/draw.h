@@ -44,12 +44,6 @@ static inline status_t draw_shape_rhombus(matrix_t *mx, object_t *obj)
 	return _stat;
 }
 
-static inline status_t draw_shape_triangle(matrix_t *mx, object_t *obj)
-{
-	status_t _stat = SUCCESS;
-	return _stat;
-}
-
 static inline status_t draw_shape(matrix_t *mx, object_t *obj)
 {
 	status_t _stat = SUCCESS;
@@ -59,9 +53,6 @@ static inline status_t draw_shape(matrix_t *mx, object_t *obj)
 			break;
 		case RHOMBUS :
 			CHECK_STAT(draw_shape_rhombus(mx, obj));
-			break;
-		case TRIANGLE :
-			CHECK_STAT(draw_shape_triangle(mx, obj));
 			break;
 	}
 	return _stat;
