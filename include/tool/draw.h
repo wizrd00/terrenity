@@ -48,6 +48,8 @@ static inline status_t draw_shape(matrix_t *mx, object_t *obj)
 {
 	status_t _stat = SUCCESS;
 	switch (obj->shape) {
+		case EMPTY :
+			break;
 		case RECTANGLE :
 			CHECK_STAT(draw_shape_rectangle(mx, obj));
 			break;

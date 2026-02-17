@@ -20,21 +20,21 @@ void setUp(void)
 	char r6[] = {'f', 'g', 'h', 'o', 'p'};
 	char r7[] = {'v', 'w', 'x', 'y', 'z'};
 	char r8[] = {'q', 'r', 's', 't', 'u'};
-	dst_mx0 = (char **) calloc(sizeof(char *) , 4);
-	src_mx0 = (char **) calloc(sizeof(char *) , 4);
+	dst_mx0 = (char **) calloc(4, sizeof(char *));
+	src_mx0 = (char **) calloc(4, sizeof(char *));
 	for (int i = 0; i < 4; i++) {
-		dst_mx0[i] = (char *) calloc(sizeof(char) , 4);
-		src_mx0[i] = (char *) calloc(sizeof(char) , 4);
+		dst_mx0[i] = (char *) calloc(4, sizeof(char));
+		src_mx0[i] = (char *) calloc(4, sizeof(char));
 	}
 	memcpy(src_mx0[0], r0, 4);
 	memcpy(src_mx0[1], r1, 4);
 	memcpy(src_mx0[2], r2, 4);
 	memcpy(src_mx0[3], r3, 4);
-	dst_mx1 = (char **) calloc(sizeof(char *) , 5);
-	src_mx1 = (char **) calloc(sizeof(char *) , 5);
+	dst_mx1 = (char **) calloc(5, sizeof(char *));
+	src_mx1 = (char **) calloc(5, sizeof(char *));
 	for (int i = 0; i < 5; i++) {
-		dst_mx1[i] = (char *) calloc(sizeof(char) , 5);
-		src_mx1[i] = (char *) calloc(sizeof(char) , 5);
+		dst_mx1[i] = (char *) calloc(5, sizeof(char));
+		src_mx1[i] = (char *) calloc(5, sizeof(char));
 	}
 	memcpy(src_mx1[0], r4, 5);
 	memcpy(src_mx1[1], r5, 5);

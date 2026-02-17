@@ -7,9 +7,9 @@ struct termios stdout_tp;
 
 static int set_stdin_attributes(void)
 {
-	stdin_tp.c_iflag &= ~(BRKINT | ICRNL);
-	stdin_tp.c_iflag |= (IGNBRK | IGNPAR);
-	stdin_tp.c_lflag &= ~(ECHO | ECHOE | ECHOK | ECHONL | ICANON | IEXTEN | ISIG);
+	stdin_tp.c_iflag &= (tcflag_t) ~(BRKINT | ICRNL);
+	stdin_tp.c_iflag |= (tcflag_t) (IGNBRK | IGNPAR);
+	stdin_tp.c_lflag &= (tcflag_t) ~(ECHO | ECHOE | ECHOK | ECHONL | ICANON | IEXTEN | ISIG);
 	if (tcsetattr(fileno(stdin), TCSANOW, &stdin_tp) != 0)
 		return -1;
 	return 0;
@@ -17,7 +17,7 @@ static int set_stdin_attributes(void)
 
 static int set_stdout_attributes(void)
 {
-	stdout_tp.c_lflag &= ~(ICANON | IEXTEN | ISIG);
+	stdout_tp.c_lflag &= (tcflag_t) ~(ICANON | IEXTEN | ISIG);
 	if (tcsetattr(fileno(stdout), TCSANOW, &stdout_tp) != 0)
 		return -1;
 	return 0;
@@ -28,13 +28,13 @@ static status_t allocate_matrix(matrix_t *mx)
 	status_t _stat = SUCCESS;
 	CHECK_NOTEQUAL(0, mx->row, BADSIZE);
 	CHECK_NOTEQUAL(0, mx->col, BADSIZE);
-	mx->floor_mx = (pixel_t **) calloc(sizeof(pixel_t *), mx->row);
-	mx->float_mx = (pixel_t **) calloc(sizeof(pixel_t *), mx->row);
+	mx->floor_mx = (pixel_t **) calloc(mx->row, sizeof(pixel_t *));
+	mx->float_mx = (pixel_t **) calloc(mx->row, sizeof(pixel_t *));
 	CHECK_PTR(mx->floor_mx, ECALLOC);
 	CHECK_PTR(mx->float_mx, ECALLOC);
-	for (int i = 0; i < mx->row; i++) {
-		mx->floor_mx[i] = (pixel_t *) calloc(sizeof(pixel_t), mx->col);
-		mx->float_mx[i] = (pixel_t *) calloc(sizeof(pixel_t), mx->col);
+	for (size_t i = 0; i < mx->row; i++) {
+		mx->floor_mx[i] = (pixel_t *) calloc(mx->col, sizeof(pixel_t));
+		mx->float_mx[i] = (pixel_t *) calloc(mx->col, sizeof(pixel_t));
 		CHECK_PTR(mx->floor_mx[i], ECALLOC);
 		CHECK_PTR(mx->float_mx[i], ECALLOC);
 	}
@@ -43,7 +43,7 @@ static status_t allocate_matrix(matrix_t *mx)
 
 static void free_matrix(matrix_t *mx)
 {
-	for (int i = 0; i < mx->row; i++) {
+	for (size_t i = 0; i < mx->row; i++) {
 		free(mx->floor_mx[i]);
 		free(mx->float_mx[i]);
 	}
@@ -55,10 +55,9 @@ static void free_matrix(matrix_t *mx)
 static status_t render_matrix(matrix_t *mx)
 {
 	status_t _stat = SUCCESS;
-	char buf[PIXEL_FORMAT_SIZE] = {0};
 	uint8_t sec0 = 0, sec1 = 0, underline = 0, bold = 0;
-	for (int i = 0; i < mx->row; i++)
-		for (int j = 0; j < mx->col; j++) {
+	for (size_t i = 0; i < mx->row; i++)
+		for (size_t j = 0; j < mx->col; j++) {
 			underline = mx->floor_mx[i][j].ulbd;
 			bold = mx->floor_mx[i][j].ulbd;
 			sec0 = (underline != 0) ? underline : bold;
@@ -140,8 +139,8 @@ status_t mx_deinit(matrix_t *mx)
 status_t mx_refresh(matrix_t *mx)
 {
 	status_t _stat = SUCCESS;
-	for (int i = 0; i < mx->row; i++)
-		for (int j = 0; j < mx->col; j++)
+	for (size_t i = 0; i < mx->row; i++)
+		for (size_t j = 0; j < mx->col; j++)
 			mx->floor_mx[i][j] = mx->float_mx[i][j];
 	mx->update = YREQ;
 	return _stat;
@@ -164,8 +163,8 @@ status_t mx_reset(matrix_t *mx)
 	status_t _stat = SUCCESS;
 	pixel_t nullpx = {.ulbd = 0, .bgnd = 0, .fgnd = 0, .cval = 0};
 	object_t *obj = mx->lnobject[0].next;
-	for (int i = 0; i < mx->row; i++)
-		for (int j = 0; j < mx->col; j++)
+	for (size_t i = 0; i < mx->row; i++)
+		for (size_t j = 0; j < mx->col; j++)
 			mx->float_mx[i][j] = nullpx;
 	while (obj->shape != EMPTY) {
 		obj->shape = EMPTY;
@@ -178,8 +177,8 @@ status_t mx_reset(matrix_t *mx)
 status_t mx_fill(matrix_t *mx, pixel_t *px)
 {
 	status_t _stat = SUCCESS;
-	for (int i = 0; i < mx->row; i++)
-		for (int j = 0; j < mx->col; j++)
+	for (size_t i = 0; i < mx->row; i++)
+		for (size_t j = 0; j < mx->col; j++)
 			mx->float_mx[i][j] = *px;
 	CHECK_STAT(mx_refresh(mx));
 	return _stat;
@@ -272,7 +271,7 @@ status_t mx_echo_on(void)
 status_t mx_echo_off(void)
 {
 	status_t _stat = SUCCESS;
-	stdin_tp.c_lflag &= ~(ECHO | ECHOE | ECHOK | ECHONL);
+	stdin_tp.c_lflag &= (tcflag_t) ~(ECHO | ECHOE | ECHOK | ECHONL);
 	CHECK_EQUAL(0, tcsetattr(fileno(stdin), TCSANOW, &stdin_tp), NOTCSET);
 	return _stat;
 }
