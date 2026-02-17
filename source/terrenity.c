@@ -7,7 +7,9 @@ struct termios stdout_tp;
 
 static int set_stdin_attributes(void)
 {
-	cfmakeraw(&stdin_tp);
+	stdin_tp.c_iflag &= ~(BRKINT | ICRNL);
+	stdin_tp.c_iflag |= (IGNBRK | IGNPAR);
+	stdin_tp.c_lflag &= ~(ECHO | ECHOE | ECHOK | ECHONL | ICANON | IEXTEN | ISIG);
 	if (tcsetattr(fileno(stdin), TCSANOW, &stdin_tp) != 0)
 		return -1;
 	return 0;
@@ -15,7 +17,7 @@ static int set_stdin_attributes(void)
 
 static int set_stdout_attributes(void)
 {
-	cfmakeraw(&stdout_tp);
+	stdout_tp.c_lflag &= ~(ICANON | IEXTEN | ISIG);
 	if (tcsetattr(fileno(stdout), TCSANOW, &stdout_tp) != 0)
 		return -1;
 	return 0;
