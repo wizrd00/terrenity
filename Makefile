@@ -1,7 +1,15 @@
 VERSION := 0.9.0
-CC := pcc
-CFLAGS := -std=c99 -O3 -g -Wc,-Werror=implicit-function-declaration,-Werror=missing-prototypes,-Werror=pointer-sign,-Werror=sign-compare,-Werror=strict-prototypes,-Werror=shadow
-CFLAGS_PIC := -shared -fPIC 
+CC ?= pcc
+ifeq ($(CC), pcc)
+        CFLAGS := -std=c99 -O3 -Wc,-Werror=implicit-function-declaration,-Werror=missing-prototypes,-Werror=pointer-sign,-Werror=sign-compare,-Werror=strict-prototypes,-Werror=shadow -pthread
+        CFLAGS_PIC := -shared -fPIC 
+
+else ifeq ($(CC), gcc)
+        CFLAGS := -std=c99 -O3 -Wall -Wextra -Wpedantic -Wstrict-aliasing -Wcast-align -Wconversion -Wsign-conversion -Wshadow -Wswitch-enum -pthread
+        CFLAGS_PIC := -shared -fPIC
+else
+        $(error unsupported compiler : $(CC))
+endif
 
 SRC_DIR := source
 INC_DIR := include
