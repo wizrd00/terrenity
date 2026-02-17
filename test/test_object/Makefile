@@ -1,10 +1,22 @@
-CC := pcc
-CFLAGS := -std=c99 -O3 -g -Wc,-Werror=implicit-function-declaration,-Werror=implicit-int,-Werror=missing-prototypes,-Werror=pointer-sign,-Werror=sign-compare,-Werror=strict-prototypes,-Werror=shadow,-Werror=truncate
-LIB_FLAGS := -Wl,--library-path=../../library,--library=unity,--library=terrenity,-rpath=../../library
+CC ?= pcc
 
 BUILD_DIR := build
 INCLUDE_DIR := ../../include
+LIB_DIR := ../../library
 UNITY_DIR := ../libunity
+
+ifeq ($(CC), pcc)
+	CFLAGS := -std=c99 -O3 -Wc,-Werror=implicit-function-declaration,-Werror=missing-prototypes,-Werror=pointer-sign,-Werror=sign-compare,-Werror=strict-prototypes,-Werror=shadow -pthread
+	CFLAGS_PIC := -shared -fPIC
+	LIB_FLAGS := -Wl,--library-path=../../library,--library=unity,--library=terrenity,-rpath=../../library
+
+else ifeq ($(CC), gcc)
+	CFLAGS := -std=c99 -O3 -Wall -Wextra -Wpedantic -Wstrict-aliasing -Wcast-align -Wconversion -Wsign-conversion -Wshadow -Wswitch-enum -pthread
+	CFLAGS_PIC := -shared -fPIC
+	LIB_FLAGS := -L$(LIB_DIR) -lunity -Wl,-rpath=$(LIB_DIR)
+else
+	$(error unsupported compiler : $(CC))
+endif
 
 TEST_SRC := test.c
 TEST_OBJ := $(BUILD_DIR)/test.o
