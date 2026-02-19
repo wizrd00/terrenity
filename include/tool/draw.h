@@ -52,6 +52,8 @@ static inline status_t draw_shape_rhombus(matrix_t *mx, object_t *obj)
 			max++;
 			min--;
 		}
+		if (!obj->fill)
+			break;
 		y++;
 		if (len == 0)
 			break;
