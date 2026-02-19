@@ -75,9 +75,10 @@ typedef struct {
 typedef struct object {
 	shape_t shape;
 	pixel_t pixel;
+	bool active;
 	bool fill;
-	size_t len, wid;
 	size_t x, y;
+	size_t len, wid;
 	struct object *prev;
 	struct object *next;
 } object_t;

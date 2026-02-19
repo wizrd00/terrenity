@@ -191,6 +191,7 @@ status_t mx_popup(matrix_t *mx, object_t *obj, object_t **hdl)
 	CHECK_EQUAL(0, allocate_object(mx), EMALLOC);
 	*hdl = mx->lnobject[1].prev;
 	(*hdl)->shape = obj->shape;
+	(*hdl)->active = obj->active;
 	(*hdl)->pixel = obj->pixel;
 	(*hdl)->fill = obj->fill;
 	(*hdl)->len = obj->len;

@@ -2,12 +2,18 @@
 #include "terrenity.h"
 #include <stdio.h>
 #include <time.h>
+#include <sys/ioctl.h>
 
 static matrix_t mx;
 
 void setUp(void)
 {
-	mx_init(&mx, false, true);
+	struct winsize ws;
+	ioctl(fileno(stdout), TIOCGWINSZ, &ws);
+	mx.row = ws.ws_row;
+	mx.col = ws.ws_col;
+	if (mx_init(&mx, false, true) != SUCCESS)
+		fprintf(stderr, "mx_init() failed");
 	return;
 }
 
@@ -28,6 +34,8 @@ void test_popup(void)
 			.fgnd = LFGRED,
 			.cval = ' '
 		},
+		.active = true,
+		.fill = true,
 		.len = mx.col,
 		.wid = mx.row,
 		.x = 0,
@@ -41,6 +49,8 @@ void test_popup(void)
 			.fgnd = LFGPURPLE,
 			.cval = ' '
 		},
+		.active = true,
+		.fill = true,
 		.len = mx.row - 3,
 		.wid = mx.row - 3,
 		.x = mx.col / 2 - 1,
