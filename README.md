@@ -101,10 +101,12 @@ This ```struct``` includes two import matrixes called **floor_mx**, **float_mx**
 #### Functions
 ##### function ```mx_init()```
 Initiates and allocates matrixes, objects and terminal attributes
+
 Prototype :
 ``` C
 status_t mx_init(matrix_t *mx, bool set_input, bool set_output);
 ```
+
 Arguments :
 | argument name | description |
 | --------------| ------------|
@@ -118,3 +120,31 @@ Return values :
 - NOTCGET : function ```tcgetattr()``` from termios.h failed, something is wrong about your terminal
 - NOTCSET : can't set terminal attributes via ```tcsetattr()``` from termios.h
 - ECALLOC : ```calloc()``` returned ```NULL```, probably out of memory
+
+##### function ```mx_deinit()```
+Deinitiates and frees matrixex, objects and resources and reverts terminal attributes in default
+
+Prototype :
+``` C
+status_t mx_deinit(matrix_t *mx);
+```
+
+Arguments :
+| argument name | description |
+| --------------| ------------|
+| ```mx``` | Main matrix |
+
+Return values :
+- SUCCESS : successful
+- NOTCSET : can't set terminal attributes via ```tcsetattr()``` into default settings
+
+##### function ```mx_refresh()```
+This function copies the float matrix to the floor matrix
+
+Arguments :
+| argument name | description |
+| --------------| ------------|
+| ```mx``` | Main matrix |
+
+Return values :
+- SUCCESS : successful

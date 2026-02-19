@@ -168,9 +168,10 @@ status_t mx_reset(matrix_t *mx)
 			mx->float_mx[i][j] = nullpx;
 	while (obj->shape != EMPTY) {
 		obj->shape = EMPTY;
+		obj->active = false;
 		obj = obj->next;
 	}
-	CHECK_STAT(mx_refresh(mx));
+	mx_refresh(mx);
 	return _stat;
 }
 
@@ -180,7 +181,7 @@ status_t mx_fill(matrix_t *mx, pixel_t *px)
 	for (size_t i = 0; i < mx->row; i++)
 		for (size_t j = 0; j < mx->col; j++)
 			mx->float_mx[i][j] = *px;
-	CHECK_STAT(mx_refresh(mx));
+	mx_refresh(mx);
 	return _stat;
 }
 
@@ -225,7 +226,7 @@ status_t mx_rotate(matrix_t *mx, rotate_t rt)
 		default :
 			return _stat = INVROTT;
 	}
-	CHECK_STAT(mx_refresh(mx));
+	mx_refresh(mx);
 	return _stat;
 }
 
