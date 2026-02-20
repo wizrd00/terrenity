@@ -109,7 +109,7 @@ status_t mx_init(matrix_t *mx, bool set_input, bool set_output)
 	if ((mx->row == 0) || (mx->col == 0))
 		return _stat = BADSIZE;
 	CHECK_NOTEQUAL(EOF, fputs(CLEAR, stdout), ERRWRIT);
-	CHECK_EQUAL(0, tcgetattr(fileno(stdin), &default_stdin_tp), NOTCGET);	
+	CHECK_EQUAL(0, tcgetattr(fileno(stdin), &default_stdin_tp), NOTCGET);
 	CHECK_EQUAL(0, tcgetattr(fileno(stdout), &default_stdout_tp), NOTCGET);
 	if (set_input)
 		CHECK_EQUAL(0, set_stdin_attributes(), NOTCSET);
@@ -171,7 +171,6 @@ status_t mx_reset(matrix_t *mx)
 		obj->active = false;
 		obj = obj->next;
 	}
-	mx_refresh(mx);
 	return _stat;
 }
 
@@ -181,7 +180,6 @@ status_t mx_fill(matrix_t *mx, pixel_t *px)
 	for (size_t i = 0; i < mx->row; i++)
 		for (size_t j = 0; j < mx->col; j++)
 			mx->float_mx[i][j] = *px;
-	mx_refresh(mx);
 	return _stat;
 }
 
@@ -226,7 +224,6 @@ status_t mx_rotate(matrix_t *mx, rotate_t rt)
 		default :
 			return _stat = INVROTT;
 	}
-	mx_refresh(mx);
 	return _stat;
 }
 
@@ -275,5 +272,21 @@ status_t mx_echo_off(void)
 	status_t _stat = SUCCESS;
 	stdin_tp.c_lflag &= (tcflag_t) ~(ECHO | ECHOE | ECHOK | ECHONL);
 	CHECK_EQUAL(0, tcsetattr(fileno(stdin), TCSANOW, &stdin_tp), NOTCSET);
+	return _stat;
+}
+
+status_t mx_hide_cursor(void)
+{
+	status_t _stat = SUCCESS;
+	CHECK_NOTEQUAL(EOF, fputs(HIDECURSOR, stdout), ERRWRIT);
+	CHECK_EQUAL(0, fflush(stdout), EFFLUSH);
+	return _stat;
+}
+
+status_t mx_show_cursor(void)
+{
+	status_t _stat = SUCCESS;
+	CHECK_NOTEQUAL(EOF, fputs(SHOWCURSOR, stdout), ERRWRIT);
+	CHECK_EQUAL(0, fflush(stdout), EFFLUSH);
 	return _stat;
 }

@@ -12,7 +12,7 @@ void setUp(void)
 	ioctl(fileno(stdout), TIOCGWINSZ, &ws);
 	mx.row = ws.ws_row;
 	mx.col = ws.ws_col;
-	if (mx_init(&mx, false, true) != SUCCESS)
+	if (mx_init(&mx, true, true) != SUCCESS)
 		fprintf(stderr, "mx_init() failed");
 	return;
 }

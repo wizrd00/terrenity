@@ -42,4 +42,8 @@ status_t mx_echo_on(void);
 
 status_t mx_echo_off(void);
 
+status_t mx_hide_cursor(void);
+
+status_t mx_show_cursor(void);
+
 #endif
