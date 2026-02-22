@@ -19,6 +19,8 @@
 #define CHECK_NOTEQUAL(val0, val1, err)\
 	do {if (val0 == val1) {return _stat = err;}} while (0)
 
+typedef unsigned char buffer_t;
+
 typedef enum {
 	SUCCESS,
 	FAILURE,
@@ -86,9 +88,11 @@ typedef struct object {
 typedef struct {
 	pixel_t **floor_mx;
 	pixel_t **float_mx;
+	buffer_t *buffer;
 	object_t lnobject[2];
 	update_t update;
 	size_t row, col;
+	size_t buffer_size;
 } matrix_t;
 
 #endif

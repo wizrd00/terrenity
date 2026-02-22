@@ -60,6 +60,7 @@ void test_popup(void)
 	object_t *hdl1;
 	_stat = mx_fill(&mx, &((pixel_t){.ulbd = BOLD, .bgnd = LBGBLACK, .fgnd = LFGBLUE, .cval = '.'}));
 	TEST_ASSERT_EQUAL(SUCCESS, _stat);
+	mx_hide_cursor();
 
 	_stat = mx_popup(&mx, &obj0, &hdl0);
 	TEST_ASSERT_EQUAL(SUCCESS, _stat);
@@ -135,6 +136,7 @@ void test_popup(void)
 		mx_clear();
 		mx_refresh(&mx);
 	}
+	mx_show_cursor();
 	return;
 }
 

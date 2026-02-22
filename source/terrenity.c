@@ -23,7 +23,23 @@ static int set_stdout_attributes(void)
 	return 0;
 }
 
-static status_t allocate_matrix(matrix_t *mx)
+static status_t allocate_buffer(matrix_t *restrict mx)
+{
+	status_t _stat = SUCCESS;
+	CHECK_NOTEQUAL(0, mx->buffer_size, BADSIZE);
+	mx->buffer = (buffer_t *) calloc(mx->buffer_size, sizeof(buffer_t));
+	CHECK_PTR(mx->buffer, ECALLOC);
+	return _stat;
+}
+
+static status_t free_buffer(matrix_t *restrict mx)
+{
+	status_t _stat = SUCCESS;
+	free((void *) mx->buffer);
+	return _stat;
+}
+
+static status_t allocate_matrix(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
 	CHECK_NOTEQUAL(0, mx->row, BADSIZE);
@@ -41,7 +57,7 @@ static status_t allocate_matrix(matrix_t *mx)
 	return _stat;
 }
 
-static void free_matrix(matrix_t *mx)
+static void free_matrix(matrix_t *restrict mx)
 {
 	for (size_t i = 0; i < mx->row; i++) {
 		free(mx->floor_mx[i]);
@@ -52,23 +68,19 @@ static void free_matrix(matrix_t *mx)
 	return;
 }
 
-static status_t render_matrix(matrix_t *mx)
+static status_t render_matrix(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
-	uint8_t sec0 = 0, sec1 = 0, underline = 0, bold = 0;
 	for (size_t i = 0; i < mx->row; i++)
-		for (size_t j = 0; j < mx->col; j++) {
-			underline = mx->floor_mx[i][j].ulbd;
-			bold = mx->floor_mx[i][j].ulbd;
-			sec0 = (underline != 0) ? underline : bold;
-			sec1 = (bold != 0) ? bold : underline;
-			fprintf(stdout, PIXEL_FORMAT, sec0, sec1, mx->floor_mx[i][j].bgnd, mx->floor_mx[i][j].fgnd, mx->floor_mx[i][j].cval);
-		}
+		for (size_t j = 0; j < mx->col; j++)
+			pixelcpy(mx->buffer + OFFSET(i, j, mx->col), mx->floor_mx[i] + j);
+	CHECK_EQUAL(mx->buffer_size, fwrite((void *) mx->buffer, sizeof(buffer_t), mx->buffer_size, stdout), ERRWRIT);
+	CHECK_NOTEQUAL(EOF, fputs(RESETFRAME, stdout), ERRWRIT);
 	CHECK_NOTEQUAL(EOF, fflush(stdout), EFFLUSH);
 	return _stat;
 }
 
-static status_t allocate_object(matrix_t *mx)
+static status_t allocate_object(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
 	object_t *new_obj = (object_t *) malloc(sizeof(object_t));
@@ -80,7 +92,7 @@ static status_t allocate_object(matrix_t *mx)
 	return _stat;
 }
 
-static void free_object(matrix_t *mx)
+static void free_object(matrix_t *restrict mx)
 {
 	object_t *obj = mx->lnobject[0].next;
 	object_t *tmp_obj;
@@ -92,7 +104,7 @@ static void free_object(matrix_t *mx)
 	return;
 }
 
-static status_t render_object(matrix_t *mx)
+static status_t render_object(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
 	object_t *obj = mx->lnobject[0].next;
@@ -103,11 +115,14 @@ static status_t render_object(matrix_t *mx)
 	return _stat;
 }
 
-status_t mx_init(matrix_t *mx, bool set_input, bool set_output)
+status_t mx_init(matrix_t *restrict mx, bool set_input, bool set_output)
 {
 	status_t _stat = SUCCESS;
 	if ((mx->row == 0) || (mx->col == 0))
 		return _stat = BADSIZE;
+	mx->buffer_size = mx->row * mx->col * PIXEL_SIZE;
+	CHECK_STAT(allocate_buffer(mx));
+	CHECK_STAT(allocate_matrix(mx));
 	CHECK_NOTEQUAL(EOF, fputs(CLEAR, stdout), ERRWRIT);
 	CHECK_EQUAL(0, tcgetattr(fileno(stdin), &default_stdin_tp), NOTCGET);
 	CHECK_EQUAL(0, tcgetattr(fileno(stdout), &default_stdout_tp), NOTCGET);
@@ -116,7 +131,6 @@ status_t mx_init(matrix_t *mx, bool set_input, bool set_output)
 	if (set_output)
 		CHECK_EQUAL(0, set_stdout_attributes(), NOTCSET);
 	mx->update = YREQ;
-	CHECK_STAT(allocate_matrix(mx));
 	mx->lnobject[0].shape = EMPTY;
 	mx->lnobject[1].shape = EMPTY;
 	mx->lnobject[0].next = mx->lnobject + 1;
@@ -124,19 +138,20 @@ status_t mx_init(matrix_t *mx, bool set_input, bool set_output)
 	return _stat;
 }
 
-status_t mx_deinit(matrix_t *mx)
+status_t mx_deinit(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
 	CHECK_STAT(mx_reset(mx));
 	CHECK_STAT(mx_render(mx));
 	free_matrix(mx);
 	free_object(mx);
+	free_buffer(mx);
 	CHECK_NOTEQUAL(-1, tcsetattr(fileno(stdin), TCSANOW, &default_stdin_tp), NOTCSET);
 	CHECK_NOTEQUAL(-1, tcsetattr(fileno(stdout), TCSANOW, &default_stdout_tp), NOTCSET);
 	return _stat;
 }
 
-status_t mx_refresh(matrix_t *mx)
+status_t mx_refresh(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
 	for (size_t i = 0; i < mx->row; i++)
@@ -146,7 +161,7 @@ status_t mx_refresh(matrix_t *mx)
 	return _stat;
 }
 
-status_t mx_render(matrix_t *mx)
+status_t mx_render(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
 	if (mx->update == YREQ) {
@@ -158,7 +173,7 @@ status_t mx_render(matrix_t *mx)
 	return _stat;
 }
 
-status_t mx_reset(matrix_t *mx)
+status_t mx_reset(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
 	pixel_t nullpx = {.ulbd = 0, .bgnd = 0, .fgnd = 0, .cval = 0};
@@ -174,7 +189,7 @@ status_t mx_reset(matrix_t *mx)
 	return _stat;
 }
 
-status_t mx_fill(matrix_t *mx, pixel_t *px)
+status_t mx_fill(matrix_t *restrict mx, pixel_t *restrict px)
 {
 	status_t _stat = SUCCESS;
 	for (size_t i = 0; i < mx->row; i++)
@@ -183,7 +198,7 @@ status_t mx_fill(matrix_t *mx, pixel_t *px)
 	return _stat;
 }
 
-status_t mx_popup(matrix_t *mx, object_t *obj, object_t **hdl)
+status_t mx_popup(matrix_t *restrict mx, object_t *restrict obj, object_t **restrict hdl)
 {
 	status_t _stat = SUCCESS;
 	CHECK_NOTEQUAL(EMPTY, obj->shape, NOSHAPE);
@@ -201,7 +216,7 @@ status_t mx_popup(matrix_t *mx, object_t *obj, object_t **hdl)
 	return _stat;
 }
 
-status_t mx_popdown(matrix_t *mx, object_t *obj)
+status_t mx_popdown(matrix_t *restrict mx, object_t *restrict obj)
 {
 	status_t _stat = SUCCESS;
 	obj->prev->next = obj->next->prev;
@@ -210,7 +225,7 @@ status_t mx_popdown(matrix_t *mx, object_t *obj)
 	return _stat;
 }
 
-status_t mx_rotate(matrix_t *mx, rotate_t rt)
+status_t mx_rotate(matrix_t *restrict mx, rotate_t rt)
 {
 	status_t _stat = SUCCESS;
 	CHECK_EQUAL(mx->row, mx->col, ESQUARE);
@@ -227,7 +242,7 @@ status_t mx_rotate(matrix_t *mx, rotate_t rt)
 	return _stat;
 }
 
-status_t mx_unlock(matrix_t *mx)
+status_t mx_unlock(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
 	mx->update = YREQ;
