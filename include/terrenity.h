@@ -24,6 +24,8 @@ status_t mx_render(matrix_t *restrict mx);
 
 status_t mx_reset(matrix_t *restrict mx);
 
+status_t mx_setpixel(matrix_t *restrict mx, pixel_t *restrict px, size_t x, size_t y);
+
 status_t mx_fill(matrix_t *restrict mx, pixel_t *restrict px);
 
 status_t mx_popup(matrix_t *restrict mx, object_t *restrict obj, object_t **restrict hdl);

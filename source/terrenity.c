@@ -189,6 +189,15 @@ status_t mx_reset(matrix_t *restrict mx)
 	return _stat;
 }
 
+status_t mx_setpixel(matrix_t *restrict mx, pixel_t *restrict px, size_t x, size_t y)
+{
+	status_t _stat = SUCCESS;
+	if ((x >= mx->col) || (y >= mx->row))
+		return _stat = BADSIZE;
+	mx->float_mx[y][x] = *px;
+	return _stat;
+}
+
 status_t mx_fill(matrix_t *restrict mx, pixel_t *restrict px)
 {
 	status_t _stat = SUCCESS;
