@@ -66,19 +66,19 @@ void test_moving_shape(void)
 	status_t _stat = SUCCESS;
 	object_t *hdl;
 	object_t ship = {
-		.shape = RHOMBUS,
+		.shape = RECTANGLE,
 		.pixel = {
 			.ulbd = NONE,
-			.bgnd = LBGPURPLE,
-			.fgnd = HFGYELLOW,
-			.cval = 'o'
+			.bgnd = HBGYELLOW,
+			.fgnd = LFGYELLOW,
+			.cval = ' '
 		},
 		.active = true,
 		.fill =  true,
 		.x = (mx.col / 2),
 		.y = (mx.row / 2),
-		.len = 4,
-		.wid = 4,
+		.len = 8,
+		.wid = 1,
 	};
 	_stat = mx_fill(&mx, &(pixel_t){.ulbd = NONE, .bgnd = LBGBLACK, .fgnd = LFGBLACK, .cval = ' '});
 	TEST_ASSERT_EQUAL(SUCCESS, _stat);
@@ -104,10 +104,10 @@ void test_moving_shape(void)
 			hdl->y++;
 			break;
 		case RIGHT :
-			hdl->x++;
+			hdl->x += 4;
 			break;
 		case LEFT :
-			hdl->x--;
+			hdl->x -= 4;
 			break;
 		case QUIT :
 			mx_show_cursor();

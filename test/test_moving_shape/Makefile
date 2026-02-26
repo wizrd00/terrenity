@@ -8,7 +8,7 @@ UNITY_DIR := ../libunity
 ifeq ($(CC), pcc)
 	CFLAGS := -std=c99 -g -O3 -Wc,-Werror=implicit-function-declaration,-Werror=missing-prototypes,-Werror=pointer-sign,-Werror=sign-compare,-Werror=strict-prototypes,-Werror=shadow -pthread
 	CFLAGS_PIC := -shared -fPIC
-	LIB_FLAGS := -Wl,--library-path=../../library,--library=unity,--library=terrenity,-rpath=../../library
+	LIB_FLAGS := -Wl,--library-path=../../library,--library=unity,--library=terrenity-musl,-rpath=../../library
 
 else ifeq ($(CC), gcc)
 	CFLAGS := -std=c99 -O3 -Wall -Wextra -Wpedantic -Wstrict-aliasing -Wcast-align -Wconversion -Wsign-conversion -Wshadow -Wswitch-enum -pthread

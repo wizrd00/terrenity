@@ -1,6 +1,6 @@
 CC := pcc
 CFLAGS := -std=c99 -O3 -g -Wc,-Werror=implicit-function-declaration,-Werror=implicit-int,-Werror=missing-prototypes,-Werror=pointer-sign,-Werror=sign-compare,-Werror=strict-prototypes,-Werror=shadow,-Werror=truncate
-LIB_FLAGS := -Wl,--library-path=../../library,--library=unity,--library=terrenity,-rpath=../../library
+LIB_FLAGS := -Wl,--library-path=../../library,--library=unity,--library=terrenity-musl,-rpath=../../library
 
 BUILD_DIR := build
 INCLUDE_DIR := ../../include
