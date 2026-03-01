@@ -27,15 +27,14 @@ typedef enum {
 	INVROTT,
 	NOTCGET,
 	NOTCSET,
-	NOIOCTL,
 	NOSHAPE,
+	ERRCALL,
 	ERRREAD,
 	ERRWRIT,
 	ERRDRAW,
-	ECALLOC,
-	EMALLOC,
-	EFFLUSH,
-	ESQUARE,
+	ERRALOC,
+	ERRFLSH,
+	ERRSQRE,
 	BADSIZE,
 	BADSHAP
 } status_t;
@@ -94,5 +93,7 @@ typedef struct {
 	size_t row, col;
 	size_t buffer_size;
 } matrix_t;
+
+typedef status_t (*callback_t)(matrix_t *restrict mx);
 
 #endif

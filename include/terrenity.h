@@ -20,7 +20,7 @@ status_t mx_deinit(matrix_t *restrict mx);
 
 status_t mx_refresh(matrix_t *restrict mx);
 
-status_t mx_render(matrix_t *restrict mx);
+status_t mx_render(matrix_t *restrict mx, callback_t cb);
 
 status_t mx_reset(matrix_t *restrict mx);
 

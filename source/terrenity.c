@@ -28,7 +28,7 @@ static status_t allocate_buffer(matrix_t *restrict mx)
 	status_t _stat = SUCCESS;
 	CHECK_NOTEQUAL(0, mx->buffer_size, BADSIZE);
 	mx->buffer = (buffer_t *) calloc(mx->buffer_size, sizeof(buffer_t));
-	CHECK_PTR(mx->buffer, ECALLOC);
+	CHECK_PTR(mx->buffer, ERRALOC);
 	return _stat;
 }
 
@@ -46,13 +46,13 @@ static status_t allocate_matrix(matrix_t *restrict mx)
 	CHECK_NOTEQUAL(0, mx->col, BADSIZE);
 	mx->floor_mx = (pixel_t **) calloc(mx->row, sizeof(pixel_t *));
 	mx->float_mx = (pixel_t **) calloc(mx->row, sizeof(pixel_t *));
-	CHECK_PTR(mx->floor_mx, ECALLOC);
-	CHECK_PTR(mx->float_mx, ECALLOC);
+	CHECK_PTR(mx->floor_mx, ERRALOC);
+	CHECK_PTR(mx->float_mx, ERRALOC);
 	for (size_t i = 0; i < mx->row; i++) {
 		mx->floor_mx[i] = (pixel_t *) calloc(mx->col, sizeof(pixel_t));
 		mx->float_mx[i] = (pixel_t *) calloc(mx->col, sizeof(pixel_t));
-		CHECK_PTR(mx->floor_mx[i], ECALLOC);
-		CHECK_PTR(mx->float_mx[i], ECALLOC);
+		CHECK_PTR(mx->floor_mx[i], ERRALOC);
+		CHECK_PTR(mx->float_mx[i], ERRALOC);
 	}
 	return _stat;
 }
@@ -68,15 +68,16 @@ static void free_matrix(matrix_t *restrict mx)
 	return;
 }
 
-static status_t render_matrix(matrix_t *restrict mx)
+static status_t render_matrix(matrix_t *restrict mx, callback_t cb)
 {
 	status_t _stat = SUCCESS;
+	if (cb != NULL) CHECK_STAT(cb(mx));
 	for (size_t i = 0; i < mx->row; i++)
 		for (size_t j = 0; j < mx->col; j++)
 			pixelcpy(mx->buffer + OFFSET(i, j, mx->col), mx->floor_mx[i] + j);
 	CHECK_EQUAL(mx->buffer_size, fwrite((void *) mx->buffer, sizeof(buffer_t), mx->buffer_size, stdout), ERRWRIT);
 	CHECK_NOTEQUAL(EOF, fputs(RESETFRAME, stdout), ERRWRIT);
-	CHECK_NOTEQUAL(EOF, fflush(stdout), EFFLUSH);
+	CHECK_NOTEQUAL(EOF, fflush(stdout), ERRFLSH);
 	return _stat;
 }
 
@@ -84,7 +85,7 @@ static status_t allocate_object(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
 	object_t *new_obj = (object_t *) malloc(sizeof(object_t));
-	CHECK_PTR(new_obj, EMALLOC);
+	CHECK_PTR(new_obj, ERRALOC);
 	new_obj->prev = mx->lnobject[1].prev;
 	new_obj->next = mx->lnobject + 1;
 	mx->lnobject[1].prev->next = new_obj;
@@ -142,7 +143,7 @@ status_t mx_deinit(matrix_t *restrict mx)
 {
 	status_t _stat = SUCCESS;
 	CHECK_STAT(mx_reset(mx));
-	CHECK_STAT(mx_render(mx));
+	CHECK_STAT(mx_render(mx, NULL));
 	free_matrix(mx);
 	free_object(mx);
 	free_buffer(mx);
@@ -161,13 +162,13 @@ status_t mx_refresh(matrix_t *restrict mx)
 	return _stat;
 }
 
-status_t mx_render(matrix_t *restrict mx)
+status_t mx_render(matrix_t *restrict mx, callback_t cb)
 {
 	status_t _stat = SUCCESS;
 	if (mx->update == YREQ) {
 		CHECK_STAT(render_object(mx));
 		CHECK_STAT(mx_refresh(mx));
-		CHECK_STAT(render_matrix(mx));
+		CHECK_STAT(render_matrix(mx, cb));
 		mx->update = NREQ;
 	}
 	return _stat;
@@ -211,7 +212,7 @@ status_t mx_popup(matrix_t *restrict mx, object_t *restrict obj, object_t **rest
 {
 	status_t _stat = SUCCESS;
 	CHECK_NOTEQUAL(EMPTY, obj->shape, NOSHAPE);
-	CHECK_EQUAL(0, allocate_object(mx), EMALLOC);
+	CHECK_EQUAL(0, allocate_object(mx), ERRALOC);
 	*hdl = mx->lnobject[1].prev;
 	(*hdl)->shape = obj->shape;
 	(*hdl)->active = obj->active;
@@ -237,7 +238,7 @@ status_t mx_popdown(matrix_t *restrict mx, object_t *restrict obj)
 status_t mx_rotate(matrix_t *restrict mx, rotate_t rt)
 {
 	status_t _stat = SUCCESS;
-	CHECK_EQUAL(mx->row, mx->col, ESQUARE);
+	CHECK_EQUAL(mx->row, mx->col, ERRSQRE);
 	switch (rt) {
 		case ROTCW :
 			rotate_quarter_right(mx->floor_mx, mx->float_mx, mx->row);
@@ -279,7 +280,7 @@ status_t mx_clear(void)
 {
 	status_t _stat = SUCCESS;
 	CHECK_NOTEQUAL(EOF, fputs(CLEAR, stdout), ERRWRIT);
-	CHECK_EQUAL(0, fflush(stdout), EFFLUSH);
+	CHECK_EQUAL(0, fflush(stdout), ERRFLSH);
 	return _stat;
 }
 
@@ -303,7 +304,7 @@ status_t mx_hide_cursor(void)
 {
 	status_t _stat = SUCCESS;
 	CHECK_NOTEQUAL(EOF, fputs(HIDECURSOR, stdout), ERRWRIT);
-	CHECK_EQUAL(0, fflush(stdout), EFFLUSH);
+	CHECK_EQUAL(0, fflush(stdout), ERRFLSH);
 	return _stat;
 }
 
@@ -311,6 +312,6 @@ status_t mx_show_cursor(void)
 {
 	status_t _stat = SUCCESS;
 	CHECK_NOTEQUAL(EOF, fputs(SHOWCURSOR, stdout), ERRWRIT);
-	CHECK_EQUAL(0, fflush(stdout), EFFLUSH);
+	CHECK_EQUAL(0, fflush(stdout), ERRFLSH);
 	return _stat;
 }
