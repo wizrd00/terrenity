@@ -5,6 +5,7 @@
 #define RESET     0x0000
 #define BOLD      0x0001
 #define UNDERLINE 0x0004
+#define BLINK     0x0005
 #define LBGBLACK  0x0028
 #define LBGRED    0x0029
 #define LBGGREEN  0x002a
