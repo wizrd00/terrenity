@@ -19,7 +19,6 @@ HDR_FILES := $(wildcard $(INC_DIR)/*.h)
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.c, $(BIN_DIR)/%.o, $(SRC_FILES))
 
 INCLUDE_FLAGS := -I$(INC_DIR)
-LIB_FLAGS := -Wl,--library-path=$(LIB_DIR),-rpath=$(LIB_DIR)
 
 ifeq ($(LIBC), musl)
 TERRENITY := $(LIB_DIR)/libterrenity-musl.so
