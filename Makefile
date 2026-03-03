@@ -9,7 +9,6 @@ CFLAGS_PIC := -shared -fPIC
 else
 $(error unsupported compiler : $(CC))
 endif
-LIB_FLAGS := -Wl,--library-path=$(LIB_DIR),-rpath=$(LIB_DIR)
 SRC_DIR := source
 INC_DIR := include
 BIN_DIR := binary
@@ -20,6 +19,7 @@ HDR_FILES := $(wildcard $(INC_DIR)/*.h)
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.c, $(BIN_DIR)/%.o, $(SRC_FILES))
 
 INCLUDE_FLAGS := -I$(INC_DIR)
+LIB_FLAGS := -Wl,--library-path=$(LIB_DIR),-rpath=$(LIB_DIR)
 
 ifeq ($(LIBC), musl)
 TERRENITY := $(LIB_DIR)/libterrenity-musl.so
