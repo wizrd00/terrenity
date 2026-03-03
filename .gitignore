@@ -2,3 +2,4 @@ TODO
 WARN
 *.swp
 *.swp*
+*.o
