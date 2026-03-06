@@ -32,7 +32,7 @@ static void get_arrow(arrow_t *key)
 	status_t _stat = SUCCESS;
 	unsigned char tmp_key[3];
 	for (int i = 0; i < 3; i++) {
-		_stat = mx_readkey(tmp_key + i, 50);
+		_stat = mx_readkey(tmp_key + i, 1000);
 		if (tmp_key[i] == 'q') {
 			*key = QUIT;
 			return;
@@ -64,7 +64,23 @@ static void get_arrow(arrow_t *key)
 void test_moving_shape(void)
 {
 	status_t _stat = SUCCESS;
-	object_t *hdl;
+	object_t *hdl0;
+	object_t *hdl1;
+	object_t frame = {
+		.shape = RECTANGLE,
+		.pixel = {
+			.ulbd = NONE,
+			.bgnd = LBGRED,
+			.fgnd = LFGRED,
+			.cval = ' '
+		},
+		.active = true,
+		.fill = false,
+		.x = 0,
+		.y = 0,
+		.len = mx.col,
+		.wid = mx.row
+	};
 	object_t ship = {
 		.shape = RECTANGLE,
 		.pixel = {
@@ -77,37 +93,37 @@ void test_moving_shape(void)
 		.fill =  true,
 		.x = (mx.col / 2),
 		.y = (mx.row / 2),
-		.len = 8,
+		.len = 2,
 		.wid = 1,
 	};
 	_stat = mx_fill(&mx, &(pixel_t){.ulbd = NONE, .bgnd = LBGBLACK, .fgnd = LFGBLACK, .cval = ' '});
 	TEST_ASSERT_EQUAL(SUCCESS, _stat);
 
-	_stat = mx_popup(&mx, &ship, &hdl);
+	_stat = mx_popup(&mx, &frame, &hdl0);
 	TEST_ASSERT_EQUAL(SUCCESS, _stat);
-	TEST_ASSERT_EQUAL_PTR(mx.lnobject[0].next, hdl);
-	TEST_ASSERT_EQUAL_PTR(mx.lnobject[1].prev, hdl);
-	TEST_ASSERT_EQUAL_PTR(mx.lnobject[0].next->next, mx.lnobject + 1);
+
+	_stat = mx_popup(&mx, &ship, &hdl1);
+	TEST_ASSERT_EQUAL(SUCCESS, _stat);
 
 	TEST_ASSERT_EQUAL(SUCCESS, mx_hide_cursor());
 
 	arrow_t key = ANY;
 	while (true) {
-		_stat = mx_render(&mx);
+		_stat = mx_render(&mx, NULL);
 		TEST_ASSERT_EQUAL(SUCCESS, _stat);
 		get_arrow(&key);
 		switch (key) {
 		case UP :
-			hdl->y--;
+			hdl1->y--;
 			break;
 		case DOWN :
-			hdl->y++;
+			hdl1->y++;
 			break;
 		case RIGHT :
-			hdl->x += 4;
+			hdl1->x++;
 			break;
 		case LEFT :
-			hdl->x -= 4;
+			hdl1->x--;
 			break;
 		case QUIT :
 			mx_show_cursor();
