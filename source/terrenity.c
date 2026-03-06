@@ -211,6 +211,8 @@ status_t mx_fill(matrix_t *restrict mx, pixel_t *restrict px)
 status_t mx_popup(matrix_t *restrict mx, object_t *restrict obj, object_t **restrict hdl)
 {
 	status_t _stat = SUCCESS;
+	if (obj == NULL)
+		return _stat;
 	CHECK_NOTEQUAL(EMPTY, obj->shape, NOSHAPE);
 	CHECK_EQUAL(0, allocate_object(mx), ERRALOC);
 	*hdl = mx->lnobject[1].prev;
@@ -229,6 +231,8 @@ status_t mx_popup(matrix_t *restrict mx, object_t *restrict obj, object_t **rest
 status_t mx_popdown(matrix_t *restrict mx, object_t *restrict obj)
 {
 	status_t _stat = SUCCESS;
+	if (obj == NULL)
+		return _stat;
 	obj->prev->next = obj->next->prev;
 	free((void *) obj);
 	mx->update = YREQ;
