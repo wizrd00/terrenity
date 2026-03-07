@@ -5,20 +5,40 @@ struct termios default_stdout_tp;
 struct termios stdin_tp;
 struct termios stdout_tp;
 
+static bool check_equal(struct termios *val0, struct termios *val1)
+{
+	bool check = false;
+	check = (val0->c_iflag == val1->c_iflag) ? true : false;
+	check &= (val0->c_oflag == val1->c_oflag) ? true : false;
+	check &= (val0->c_lflag == val1->c_lflag) ? true : false;
+	check &= (memcmp(val0->c_cc, val1->c_cc, NCCS) == 0) ? true : false;
+	return check;
+}
+
 static int set_stdin_attributes(void)
 {
+	struct termios tmp_stdin_tp;
 	stdin_tp.c_iflag &= (tcflag_t) ~(BRKINT | ICRNL);
 	stdin_tp.c_iflag |= (tcflag_t) (IGNBRK | IGNPAR);
 	stdin_tp.c_lflag &= (tcflag_t) ~(ECHO | ECHOE | ECHOK | ECHONL | ICANON | IEXTEN | ISIG);
 	if (tcsetattr(fileno(stdin), TCSANOW, &stdin_tp) != 0)
+		return -1;
+	if (tcgetattr(fileno(stdin), &tmp_stdin_tp) != 0)
+		return -1;
+	if (!check_equal(&stdin_tp, &tmp_stdin_tp))
 		return -1;
 	return 0;
 }
 
 static int set_stdout_attributes(void)
 {
+	struct termios tmp_stdout_tp;
 	stdout_tp.c_lflag &= (tcflag_t) ~(ICANON | IEXTEN | ISIG);
 	if (tcsetattr(fileno(stdout), TCSANOW, &stdout_tp) != 0)
+		return -1;
+	if (tcgetattr(fileno(stdout), &tmp_stdout_tp) != 0)
+		return -1;
+	if (!check_equal(&stdout_tp, &tmp_stdout_tp))
 		return -1;
 	return 0;
 }
@@ -266,15 +286,19 @@ status_t mx_unlock(matrix_t *restrict mx)
 status_t mx_readkey(unsigned char *key, unsigned char timeout)
 {
 	status_t _stat = SUCCESS;
-	cc_t tmp_vmin = stdin_tp.c_cc[VMIN], tmp_vtime = stdin_tp.c_cc[VTIME];
 	int tmp_val;
-	stdin_tp.c_cc[VMIN] = (cc_t) 0;
-	stdin_tp.c_cc[VTIME] = (cc_t) timeout;
-	CHECK_EQUAL(0, tcsetattr(fileno(stdin), TCSANOW, &stdin_tp), NOTCSET);
+	struct termios tmp_stdin_tp = stdin_tp;
+	cc_t tmp_vmin = tmp_stdin_tp.c_cc[VMIN], tmp_vtime = tmp_stdin_tp.c_cc[VTIME];
+	tmp_stdin_tp.c_cc[VMIN] = (cc_t) 0;
+	tmp_stdin_tp.c_cc[VTIME] = (cc_t) timeout;
+	if ((tmp_stdin_tp.c_cc[VMIN] != tmp_vmin) || (tmp_stdin_tp.c_cc[VTIME] != tmp_vtime))
+		CHECK_EQUAL(0, tcsetattr(fileno(stdin), TCSANOW, &stdin_tp), NOTCSET);
 	tmp_val = getchar();
-	stdin_tp.c_cc[VMIN] = tmp_vmin;
-	stdin_tp.c_cc[VTIME] = tmp_vtime;
-	CHECK_EQUAL(0, tcsetattr(fileno(stdin), TCSANOW, &stdin_tp), NOTCSET);
+	if ((tmp_stdin_tp.c_cc[VMIN] != tmp_vmin) || (tmp_stdin_tp.c_cc[VTIME] != tmp_vtime)) {
+		tmp_stdin_tp.c_cc[VMIN] = tmp_vmin;
+		tmp_stdin_tp.c_cc[VTIME] = tmp_vtime;
+		CHECK_EQUAL(0, tcsetattr(fileno(stdin), TCSANOW, &stdin_tp), NOTCSET);
+	}
 	CHECK_NOTEQUAL(EOF, tmp_val, ERRREAD);
 	*key = (unsigned char) tmp_val;
 	return _stat;

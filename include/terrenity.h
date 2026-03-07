@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+#include <errno.h>
 
 #define ISSQUARE(mx) (mx->row == mx->col)
 #define OFFSET(i, j, k) (((i * k) + j) * PIXEL_SIZE)
