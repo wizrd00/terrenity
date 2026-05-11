@@ -40,7 +40,7 @@ status_t mx_echo_on(void);
 status_t mx_echo_off(void);
 ```
 
-To use them we should be familiar with important types.
+To use them you should be familiar with important types.
 
 #### Important Types
 First of all, each function returns ```status_t``` which is an ```enum``` to specify status of function.
