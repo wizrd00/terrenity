@@ -1,9 +1,8 @@
 # terrenity
 ![Terrenity](https://img.shields.io/badge/Terrenity-Terminal%20Graphics%20Engine-blue)
-![Language](https://img.shields.io/badge/C99-Pure%20C-green)
+![Language](https://img.shields.io/badge/Pure-C99-green)
 ![Rendering](https://img.shields.io/badge/Rendering-Framebuffer-orange)
-![Input](https://img.shields.io/badge/Input-Realtime-red)
-![Platform](https://img.shields.io/badge/Linux-POSIX-success)
+![Platform](https://img.shields.io/badge/Linux-POSIX-red)
 
 lightweight, fast and simple terminal-based graphic rendering library.
 This library provides several functions to manipulating terminal and drawing shapes on it.
