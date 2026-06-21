@@ -146,6 +146,11 @@ Return values :
 ##### function ```mx_refresh()```
 This function copies the float matrix to the floor matrix
 
+Prototype :
+``` C
+status_t mx_refresh(matrix_t *restrict mx);
+```
+
 Arguments :
 | argument name | description |
 | --------------| ------------|
